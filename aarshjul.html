@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Årshjul 2026 – Norconsult</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:           #F2EDE3;
+  --paper:        #FDFAF3;
+  --ink:          #1C1814;
+  --ink-soft:     #4C4640;
+  --ink-muted:    #A09890;
+  --gold:         #B08C22;
+  --blue:         #1F547A;
+  --blue-light:   #EBF2F8;
+  --border:       #DDD7CB;
+  --border-light: #EAE5DA;
+  --red:          #B83025;
+  --green:        #2a7a3a;
+  --nc:           #006B3C;
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+html,body { height:100%; overflow:hidden; }
+body { background:var(--bg); font-family:'DM Sans',sans-serif; color:var(--ink); display:flex; flex-direction:column; }
+
+/* ── HEADER ── */
+.site-header {
+  flex-shrink:0; height:52px; background:var(--ink);
+  border-bottom:3px solid var(--gold);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 20px; gap:12px; z-index:100;
+}
+.site-header h1 { font-family:'Playfair Display',serif; font-size:1.15rem; font-weight:900; color:#fff; letter-spacing:.04em; white-space:nowrap; }
+.site-header h1 em { color:var(--gold); font-style:normal; }
+.hdr-nav { display:flex; gap:6px; align-items:center; }
+.hdr-nav a, .hdr-nav button {
+  font-family:'DM Mono',monospace; font-size:.65rem; font-weight:500;
+  color:#bbb; text-decoration:none; padding:3px 9px;
+  border:1px solid #444; border-radius:3px; background:none; cursor:pointer;
+  transition:all .15s; white-space:nowrap;
+}
+.hdr-nav a:hover, .hdr-nav button:hover { background:var(--gold); color:var(--ink); border-color:var(--gold); }
+.hdr-nav a.active { background:var(--gold); color:var(--ink); border-color:var(--gold); }
+
+/* ── MAIN LAYOUT ── */
+.app { flex:1; display:flex; min-height:0; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width:280px; flex-shrink:0;
+  background:var(--paper); border-right:1px solid var(--border);
+  display:flex; flex-direction:column; overflow-y:auto;
+}
+.sb-sect { padding:14px 16px; border-bottom:1px solid var(--border-light); }
+.sb-sect:last-child { border-bottom:none; }
+.sb-title {
+  font-family:'Playfair Display',serif; font-size:.88rem; font-weight:700;
+  color:var(--ink); margin-bottom:9px; display:flex; align-items:center; gap:7px;
+}
+
+/* year buttons */
+.year-row { display:flex; gap:5px; flex-wrap:wrap; }
+.year-btn {
+  font-family:'DM Mono',monospace; font-size:.66rem;
+  padding:3px 9px; border:1px solid var(--border); border-radius:3px;
+  cursor:pointer; background:var(--paper); color:var(--ink-soft); transition:all .15s;
+}
+.year-btn:hover { border-color:var(--blue); color:var(--blue); }
+.year-btn.active { background:var(--gold); border-color:var(--gold); color:var(--ink); font-weight:700; }
+
+/* gcal strip */
+.gcal-signin-btn {
+  display:flex; align-items:center; gap:7px;
+  background:var(--blue); color:#fff; border:none; border-radius:5px;
+  padding:7px 12px; font-family:'DM Sans',sans-serif; font-size:.75rem; font-weight:600;
+  cursor:pointer; width:100%; justify-content:center; transition:background .15s;
+}
+.gcal-signin-btn:hover { background:#174060; }
+.gcal-signout-btn {
+  font-family:'DM Mono',monospace; font-size:.62rem; color:var(--ink-muted);
+  background:none; border:1px solid var(--border); border-radius:3px;
+  padding:3px 8px; cursor:pointer; margin-top:5px; transition:all .15s;
+}
+.gcal-signout-btn:hover { border-color:var(--red); color:var(--red); }
+.gcal-status { font-family:'DM Mono',monospace; font-size:.6rem; color:var(--green); margin-top:5px; }
+
+/* calendar toggles */
+.cal-list { display:flex; flex-direction:column; gap:4px; margin-top:4px; }
+.cal-toggle-item {
+  display:flex; align-items:center; gap:8px;
+  padding:5px 8px; border:1px solid var(--border); border-radius:5px;
+  cursor:pointer; background:var(--paper); transition:all .15s; user-select:none;
+}
+.cal-toggle-item:hover { border-color:var(--blue); }
+.cal-toggle-item.on { background:var(--blue-light); border-color:var(--blue); }
+.cal-toggle-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+.cal-toggle-name { font-size:.72rem; font-weight:500; flex:1; }
+.cal-toggle-check { font-size:.65rem; color:var(--blue); opacity:0; transition:opacity .1s; }
+.cal-toggle-item.on .cal-toggle-check { opacity:1; }
+
+/* project list */
+.proj-list { display:flex; flex-direction:column; gap:5px; }
+.proj-item {
+  display:flex; align-items:center; gap:8px;
+  padding:5px 8px; border:1px solid var(--border); border-radius:5px;
+  background:var(--paper); cursor:pointer; transition:all .15s;
+}
+.proj-item:hover { border-color:var(--blue); }
+.proj-item.editing { border-color:var(--blue); background:var(--blue-light); }
+.proj-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+.proj-name { font-size:.72rem; font-weight:500; flex:1; }
+.proj-del { background:none; border:none; color:var(--ink-muted); cursor:pointer; font-size:.75rem; padding:0 2px; }
+.proj-del:hover { color:var(--red); }
+
+.add-proj-btn {
+  display:flex; align-items:center; gap:6px;
+  background:none; border:1px dashed var(--border); border-radius:5px;
+  padding:6px 10px; font-size:.72rem; color:var(--ink-muted); cursor:pointer;
+  width:100%; transition:all .15s; margin-top:4px;
+}
+.add-proj-btn:hover { border-color:var(--blue); color:var(--blue); }
+
+/* project editor panel */
+.proj-editor {
+  background:var(--bg); border:1px solid var(--border); border-radius:6px;
+  padding:10px; margin-top:8px; display:none;
+}
+.proj-editor.open { display:block; }
+.proj-editor label { font-family:'DM Mono',monospace; font-size:.58rem; color:var(--ink-muted); display:block; margin-bottom:2px; margin-top:6px; text-transform:uppercase; letter-spacing:.06em; }
+.proj-editor input[type=text], .proj-editor input[type=date] {
+  width:100%; padding:4px 7px; border:1px solid var(--border); border-radius:4px;
+  font-family:'DM Sans',sans-serif; font-size:.75rem; background:var(--paper);
+}
+.proj-editor input[type=color] { width:36px; height:28px; border:1px solid var(--border); border-radius:4px; cursor:pointer; padding:2px; }
+.proj-editor-actions { display:flex; gap:6px; margin-top:8px; }
+.proj-save-btn { flex:1; background:var(--blue); color:#fff; border:none; border-radius:4px; padding:5px 8px; font-size:.72rem; font-weight:600; cursor:pointer; }
+.proj-save-btn:hover { background:#174060; }
+.proj-cancel-btn { background:none; border:1px solid var(--border); border-radius:4px; padding:5px 8px; font-size:.72rem; color:var(--ink-muted); cursor:pointer; }
+
+/* color scheme */
+.scheme-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:5px; margin-bottom:8px; }
+.scheme-btn {
+  display:flex; align-items:center; gap:5px; padding:5px 7px;
+  border:1px solid var(--border); border-radius:4px; cursor:pointer;
+  background:var(--paper); font-size:.68rem; color:var(--ink-soft); transition:all .15s;
+}
+.scheme-btn:hover { border-color:var(--blue); }
+.scheme-btn.active { background:var(--blue-light); border-color:var(--blue); color:var(--blue); font-weight:600; }
+.sw { width:9px; height:9px; border-radius:2px; flex-shrink:0; }
+
+/* print */
+.print-row { display:flex; gap:5px; flex-wrap:wrap; margin-bottom:6px; }
+.fmt-btn {
+  font-family:'DM Mono',monospace; font-size:.62rem; padding:3px 8px;
+  border:1px solid var(--border); border-radius:3px; cursor:pointer;
+  background:var(--paper); color:var(--ink-soft); transition:all .15s;
+}
+.fmt-btn.active { background:var(--blue); border-color:var(--blue); color:#fff; }
+.fmt-btn:hover:not(.active) { border-color:var(--blue); }
+.print-btn {
+  width:100%; background:var(--ink); color:#fff; border:none; border-radius:5px;
+  padding:8px; font-family:'DM Sans',sans-serif; font-size:.78rem; font-weight:600;
+  cursor:pointer; margin-top:6px; transition:background .15s;
+}
+.print-btn:hover { background:#3a3530; }
+
+/* ── WHEEL AREA ── */
+.wheel-area {
+  flex:1; display:flex; align-items:center; justify-content:center;
+  overflow:hidden; position:relative; min-width:0;
+}
+#wheelCanvas {
+  touch-action:none;
+  cursor:grab;
+  max-width:100%; max-height:100%;
+}
+#wheelCanvas:active { cursor:grabbing; }
+
+/* ── TOOLTIP ── */
+.wheel-tip {
+  position:fixed; z-index:500;
+  background:var(--ink); color:#fff;
+  padding:7px 12px; border-radius:6px;
+  font-size:.75rem; line-height:1.4;
+  pointer-events:none; display:none;
+  max-width:220px; box-shadow:0 4px 16px rgba(0,0,0,.25);
+}
+.wheel-tip strong { display:block; font-size:.82rem; margin-bottom:2px; }
+
+/* print */
+@media print {
+  .site-header,.sidebar { display:none!important; }
+  .app { display:block; }
+  .wheel-area { display:block; text-align:center; }
+  body,html { overflow:visible; height:auto; }
+  #wheelCanvas { max-width:100%!important; max-height:none!important; }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <h1>Årshjul <em id="hdrYear">2026</em></h1>
+  <nav class="hdr-nav">
+    <a href="kalender-norconsult-2026.html" id="linkKal">📅 Kalender</a>
+    <a href="aarshjul.html" class="active">🌀 Årshjul</a>
+    <span style="color:#555;font-size:.6rem;font-family:'DM Mono',monospace;">Drag for å snurre</span>
+  </nav>
+</header>
+
+<div class="app">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+
+    <!-- Year -->
+    <div class="sb-sect">
+      <div class="sb-title">📆 År</div>
+      <div class="year-row" id="yearRow"></div>
+    </div>
+
+    <!-- Google Calendar -->
+    <div class="sb-sect">
+      <div class="sb-title">🔐 Google Calendar</div>
+      <div id="gcalLoggedOut">
+        <button class="gcal-signin-btn" onclick="gcalSignIn()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          Logg inn med Google
+        </button>
+      </div>
+      <div id="gcalLoggedIn" style="display:none">
+        <div class="gcal-status" id="gcalStatus"></div>
+        <div class="cal-list" id="calList"></div>
+        <button class="gcal-signout-btn" onclick="gcalSignOut()">Logg ut</button>
+      </div>
+    </div>
+
+    <!-- Projects -->
+    <div class="sb-sect">
+      <div class="sb-title">🗂 Prosjekt / aktivitetar</div>
+      <div class="proj-list" id="projList"></div>
+      <button class="add-proj-btn" onclick="openProjEditor(null)">＋ Legg til prosjekt</button>
+      <div class="proj-editor" id="projEditor">
+        <label>Namn</label>
+        <input type="text" id="peNavn" placeholder="Prosjektnamn">
+        <label>Frå dato</label>
+        <input type="date" id="peFra">
+        <label>Til dato</label>
+        <input type="date" id="peTil">
+        <label>Farge</label>
+        <input type="color" id="peFarge" value="#1F547A">
+        <label>Lag (ring)</label>
+        <select id="peLag" style="width:100%;padding:4px 7px;border:1px solid var(--border);border-radius:4px;font-size:.75rem;background:var(--paper)">
+          <option value="0">Lag 1 (innarst)</option>
+          <option value="1">Lag 2</option>
+          <option value="2">Lag 3</option>
+          <option value="3">Lag 4 (ytarst)</option>
+        </select>
+        <div class="proj-editor-actions">
+          <button class="proj-save-btn" onclick="saveProj()">Lagre</button>
+          <button class="proj-cancel-btn" onclick="closeProjEditor()">Avbryt</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Color scheme -->
+    <div class="sb-sect">
+      <div class="sb-title">🎨 Fargesystem</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+        <span style="font-size:.7rem;color:var(--ink-soft)">Grunnfarge</span>
+        <input type="color" id="baseColor" value="#1F547A" oninput="onBaseColor()" style="width:36px;height:26px;border:1px solid var(--border);border-radius:4px;cursor:pointer;padding:2px">
+      </div>
+      <div class="scheme-grid" id="schemeGrid"></div>
+    </div>
+
+    <!-- Print -->
+    <div class="sb-sect">
+      <div class="sb-title">🖨 Skriv ut / PDF</div>
+      <div class="print-row" id="fmtRow"></div>
+      <div class="print-row">
+        <button class="fmt-btn active" id="orientP" onclick="setOrient('p')">Stående</button>
+        <button class="fmt-btn" id="orientL" onclick="setOrient('l')">Liggjande</button>
+      </div>
+      <button class="print-btn" onclick="doPrint()">🖨 Skriv ut / Lagre PDF</button>
+      <p style="font-family:'DM Mono',monospace;font-size:.57rem;color:var(--ink-muted);margin-top:6px;line-height:1.6">
+        I Chrome: vel «Lagre som PDF».<br>Slå av topptekst/botnstekst.
+      </p>
+    </div>
+
+  </aside>
+
+  <!-- ── WHEEL ── -->
+  <div class="wheel-area">
+    <canvas id="wheelCanvas"></canvas>
+  </div>
+
+</div>
+
+<!-- Tooltip -->
+<div class="wheel-tip" id="wheelTip"></div>
+
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>
+// ═══════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════
+const GCAL_CLIENT_ID = '63976458153-ff4fg9r0u0u7536dsjkg1ftt8chtrmoq.apps.googleusercontent.com';
+const GCAL_SCOPE     = 'https://www.googleapis.com/auth/calendar.readonly';
+
+let YEAR = 2026;
+let gcalToken    = null;
+let calendarMeta = {};
+let allEvents    = [];
+let projects     = JSON.parse(localStorage.getItem('nc_projects') || '[]');
+
+const MONTHS_FULL  = ['Januar','Februar','Mars','April','Mai','Juni','Juli','August','September','Oktober','November','Desember'];
+const MONTHS_SHORT = ['JAN','FEB','MAR','APR','MAI','JUN','JUL','AUG','SEP','OKT','NOV','DES'];
+const isLeap = y => (y%4===0&&y%100!==0)||y%400===0;
+const daysInYear = y => isLeap(y) ? 366 : 365;
+const MONTH_DAYS = y => [31,isLeap(y)?29:28,31,30,31,30,31,31,30,31,30,31];
+
+function isoStr(d) { return d.toISOString().slice(0,10); }
+function dayOfYear(date,y) {
+  const start = new Date(y,0,0);
+  return Math.floor((date-start)/86400000);
+}
+
+// ── EASTER (for holidays) ──
+function computeEaster(y) {
+  const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25);
+  const g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4;
+  const l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451);
+  const month=Math.floor((h+l-7*m+114)/31), day=(h+l-7*m+114)%31+1;
+  return new Date(y,month-1,day);
+}
+function addDays(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r;}
+
+function buildHolidayDOYs(y) {
+  const e = computeEaster(y);
+  const fmt = d => dayOfYear(d,y);
+  return {
+    [fmt(new Date(y,0,1))]: 'Nyttårsdag',
+    [fmt(addDays(e,-3))]: 'Skjærtorsdag',
+    [fmt(addDays(e,-2))]: 'Langfredag',
+    [fmt(e)]: '1. påskedag',
+    [fmt(addDays(e,1))]: '2. påskedag',
+    [fmt(new Date(y,4,1))]: 'Arbeidernes dag',
+    [fmt(addDays(e,39))]: 'Kristi himmelfartsdag',
+    [fmt(new Date(y,4,17))]: 'Grunnlovsdagen',
+    [fmt(addDays(e,49))]: '1. pinsedag',
+    [fmt(addDays(e,50))]: '2. pinsedag',
+    [fmt(new Date(y,11,25))]: '1. juledag',
+    [fmt(new Date(y,11,26))]: '2. juledag',
+  };
+}
+
+// ── NC extra days (DOY) ──
+function buildNcDOYs(y) {
+  const e = computeEaster(y);
+  const skjaer = addDays(e,-3);
+  const ncFree = {}, ncGro = {};
+  const fmt = d => dayOfYear(d,y);
+  ncFree[fmt(addDays(skjaer,-3))] = 'NC fri (påske)';
+  ncFree[fmt(addDays(skjaer,-2))] = 'NC fri (påske)';
+  ncFree[fmt(new Date(y,11,24))]  = 'Julaftan';
+  ncFree[fmt(new Date(y,11,28))]  = 'Romjul';
+  ncFree[fmt(new Date(y,11,29))]  = 'Romjul';
+  ncFree[fmt(new Date(y,11,30))]  = 'Romjul';
+  ncFree[fmt(new Date(y,11,31))]  = 'Nyttårsaftan';
+  ncGro[fmt(addDays(skjaer,-1))]  = 'Gro-dagen';
+  return {ncFree, ncGro};
+}
+
+// ═══════════════════════════════════════════════
+//  COLOR SCHEMES
+// ═══════════════════════════════════════════════
+let baseColor    = '#1F547A';
+let activeScheme = 'analogous';
+
+function hexToHsl(hex) {
+  let r=parseInt(hex.slice(1,3),16)/255,g=parseInt(hex.slice(3,5),16)/255,b=parseInt(hex.slice(5,7),16)/255;
+  const max=Math.max(r,g,b),min=Math.min(r,g,b),l=(max+min)/2;
+  let h=0,s=0;
+  if(max!==min){const d=max-min;s=l>.5?d/(2-max-min):d/(max+min);if(max===r)h=((g-b)/d+(g<b?6:0))/6;else if(max===g)h=((b-r)/d+2)/6;else h=((r-g)/d+4)/6;}
+  return [h*360,s*100,l*100];
+}
+function hslToHex(h,s,l) {
+  h=((h%360)+360)%360;s=Math.max(0,Math.min(100,s));l=Math.max(0,Math.min(100,l));
+  s/=100;l/=100;const a=s*Math.min(l,1-l);
+  const f=n=>{const k=(n+h/30)%12;return l-a*Math.max(Math.min(k-3,9-k,1),-1);};
+  return '#'+[f(0),f(8),f(4)].map(v=>Math.round(v*255).toString(16).padStart(2,'0')).join('');
+}
+function generatePalette(hex, scheme, count=12) {
+  const [h,s,l]=hexToHsl(hex);
+  let anchors;
+  if(scheme==='analogous')      anchors=[h,h+30,h-30,h+60,h-60,h+15,h-15,h+45,h-45,h+20,h-20,h+50];
+  else if(scheme==='triadic')   anchors=[h,h+120,h+240,h+60,h+180,h+300,h+30,h+150,h+270,h+90,h+210,h+330];
+  else if(scheme==='tetradic')  anchors=[h,h+90,h+180,h+270,h+45,h+135,h+225,h+315,h+20,h+110,h+200,h+290];
+  else if(scheme==='splitcomp') anchors=[h,h+150,h+210,h+30,h+180,h-30,h+60,h+200,h+160,h+40,h+170,h-10];
+  else if(scheme==='complementary') anchors=[h,h+180,h+30,h+210,h-30,h+150,h+15,h+195,h+45,h+165,h-15,h+165];
+  else anchors=Array(12).fill(h);
+
+  return Array.from({length:count},(_,i)=>{
+    const a=anchors[i%anchors.length];
+    if(scheme==='monochromatic'){const ls=[35,42,50,58,65,38,46,54,62,40,48,56];return hslToHex(a,Math.max(35,s),ls[i]);}
+    const ls=[Math.max(25,Math.min(70,l)),Math.max(25,Math.min(70,l-8)),Math.max(25,Math.min(70,l+8)),Math.max(25,Math.min(70,l-4)),Math.max(25,Math.min(70,l+4)),Math.max(25,Math.min(70,l-12))];
+    return hslToHex(a,Math.max(40,s),ls[i%6]);
+  });
+}
+
+const SCHEMES=[
+  {id:'analogous',   label:'Analogt'},
+  {id:'triadic',     label:'Triadisk'},
+  {id:'tetradic',    label:'Tetradisk'},
+  {id:'splitcomp',   label:'Splitkomp.'},
+  {id:'complementary',label:'Kompl.'},
+  {id:'monochromatic',label:'Mono'},
+];
+
+function buildSchemeGrid() {
+  const grid = document.getElementById('schemeGrid');
+  grid.innerHTML = '';
+  SCHEMES.forEach(sc => {
+    const p = generatePalette(baseColor, sc.id, 4);
+    const btn = document.createElement('button');
+    btn.className = 'scheme-btn' + (sc.id===activeScheme?' active':'');
+    btn.dataset.id = sc.id;
+    btn.innerHTML = p.map(c=>`<span class="sw" style="background:${c}"></span>`).join('') + `<span>${sc.label}</span>`;
+    btn.onclick = () => {
+      activeScheme = sc.id;
+      document.querySelectorAll('.scheme-btn').forEach(b=>b.classList.toggle('active',b.dataset.id===sc.id));
+      drawWheel();
+    };
+    grid.appendChild(btn);
+  });
+}
+function onBaseColor() { baseColor=document.getElementById('baseColor').value; buildSchemeGrid(); drawWheel(); }
+
+// ═══════════════════════════════════════════════
+//  WHEEL STATE
+// ═══════════════════════════════════════════════
+let rotation = -Math.PI/2; // 0 = right; start at top
+let isDragging = false;
+let lastAngle  = 0;
+let spinVelocity = 0;
+let lastDragAngle = 0;
+let lastDragTime  = 0;
+let animFrame = null;
+
+const canvas = document.getElementById('wheelCanvas');
+const ctx    = canvas.getContext('2d');
+
+function getAngleFromCenter(x, y) {
+  const rect = canvas.getBoundingClientRect();
+  const cx = rect.left + rect.width/2;
+  const cy = rect.top  + rect.height/2;
+  return Math.atan2(y-cy, x-cx);
+}
+
+// ── Drag events ──
+canvas.addEventListener('mousedown', e => {
+  isDragging  = true;
+  lastAngle   = getAngleFromCenter(e.clientX, e.clientY);
+  lastDragAngle = lastAngle;
+  lastDragTime  = Date.now();
+  spinVelocity  = 0;
+  if(animFrame) { cancelAnimationFrame(animFrame); animFrame=null; }
+});
+canvas.addEventListener('mousemove', e => {
+  if(!isDragging) { showTip(e); return; }
+  const ang = getAngleFromCenter(e.clientX, e.clientY);
+  const delta = ang - lastAngle;
+  rotation += delta;
+  lastDragAngle = ang;
+  lastDragTime  = Date.now();
+  lastAngle = ang;
+  drawWheel();
+});
+canvas.addEventListener('mouseup', e => {
+  if(!isDragging) return;
+  isDragging = false;
+  hideTip();
+  startSpin();
+});
+canvas.addEventListener('mouseleave', () => { hideTip(); if(isDragging){isDragging=false;startSpin();} });
+
+// Touch
+canvas.addEventListener('touchstart', e => {
+  e.preventDefault();
+  const t = e.touches[0];
+  isDragging = true;
+  lastAngle  = getAngleFromCenter(t.clientX, t.clientY);
+  spinVelocity = 0;
+  if(animFrame){cancelAnimationFrame(animFrame);animFrame=null;}
+},{passive:false});
+canvas.addEventListener('touchmove', e => {
+  e.preventDefault();
+  if(!isDragging) return;
+  const t = e.touches[0];
+  const ang = getAngleFromCenter(t.clientX, t.clientY);
+  const delta = ang - lastAngle;
+  rotation += delta;
+  lastDragAngle = ang;
+  lastDragTime  = Date.now();
+  lastAngle = ang;
+  drawWheel();
+},{passive:false});
+canvas.addEventListener('touchend', () => { isDragging=false; startSpin(); });
+
+function startSpin() {
+  const dt = Date.now() - lastDragTime;
+  if(dt < 80) {
+    // estimate velocity from last move
+    spinVelocity = (lastAngle - (lastDragAngle - (lastAngle-lastDragAngle))) * 0.15;
+  }
+  spinLoop();
+}
+function spinLoop() {
+  if(Math.abs(spinVelocity) < 0.0003) { spinVelocity=0; return; }
+  rotation += spinVelocity;
+  spinVelocity *= 0.96; // friction
+  drawWheel();
+  animFrame = requestAnimationFrame(spinLoop);
+}
+
+// ── Tooltip ──
+let hitMap = []; // [{angle_start, angle_end, label, color}]
+const tip = document.getElementById('wheelTip');
+
+function showTip(e) {
+  const ang = getAngleFromCenter(e.clientX, e.clientY) - rotation;
+  const normAng = ((ang % (Math.PI*2)) + Math.PI*2) % (Math.PI*2);
+  const hit = hitMap.find(h => {
+    let s = ((h.a0%(Math.PI*2))+(Math.PI*2))%(Math.PI*2);
+    let en = ((h.a1%(Math.PI*2))+(Math.PI*2))%(Math.PI*2);
+    if(s<=en) return normAng>=s&&normAng<=en;
+    return normAng>=s||normAng<=en;
+  });
+  if(hit) {
+    tip.style.display = 'block';
+    tip.style.left = (e.clientX+14)+'px';
+    tip.style.top  = (e.clientY-10)+'px';
+    tip.innerHTML  = `<strong style="color:${hit.color||'#fff'}">${hit.label}</strong>${hit.sub?'<br>'+hit.sub:''}`;
+  } else { hideTip(); }
+}
+function hideTip() { tip.style.display='none'; }
+
+// ═══════════════════════════════════════════════
+//  DRAW WHEEL
+// ═══════════════════════════════════════════════
+function resizeCanvas() {
+  const area = canvas.parentElement;
+  const sz = Math.min(area.clientWidth, area.clientHeight) - 32;
+  canvas.width  = sz;
+  canvas.height = sz;
+  drawWheel();
+}
+window.addEventListener('resize', resizeCanvas);
+
+function drawWheel() {
+  const S = canvas.width;
+  const cx = S/2, cy = S/2;
+  ctx.clearRect(0,0,S,S);
+
+  const totalDays = daysInYear(YEAR);
+  const mdays = MONTH_DAYS(YEAR);
+  const palette = generatePalette(baseColor, activeScheme, 12);
+
+  // ── Radii ──
+  const R_OUTER   = S * 0.495; // outermost (month name ring)
+  const R_MNAME   = S * 0.44;  // inner edge of month name ring
+  const R_MSEG    = S * 0.38;  // inner edge of month colour ring
+  const R_WEEK    = S * 0.34;  // inner edge of week ticks
+  const R_PROJ_O  = S * 0.33;  // outer edge of project rings
+  const R_PROJ_I  = S * 0.14;  // inner edge of project rings
+  const R_CENTER  = S * 0.13;  // centre disc
+
+  const PROJ_LAYERS = 4;
+  const projLayerH  = (R_PROJ_O - R_PROJ_I) / PROJ_LAYERS;
+
+  hitMap = [];
+
+  // helper: angle for a day-of-year
+  const dayAngle = d => rotation + (d/totalDays) * Math.PI*2;
+
+  // ── Drop shadow ──
+  ctx.save();
+  ctx.shadowColor='rgba(0,0,0,.13)'; ctx.shadowBlur=24;
+  ctx.beginPath(); ctx.arc(cx,cy,R_OUTER,0,Math.PI*2);
+  ctx.fillStyle='#fff'; ctx.fill();
+  ctx.restore();
+
+  // ── Month name ring (outermost) ──
+  let cumDay = 0;
+  mdays.forEach((d,mi) => {
+    const a0 = dayAngle(cumDay);
+    const a1 = dayAngle(cumDay+d);
+    const color = palette[mi];
+
+    // outer band
+    ctx.beginPath();
+    ctx.arc(cx,cy,R_OUTER,a0,a1);
+    ctx.arc(cx,cy,R_MNAME,a1,a0,true);
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
+
+    // month name curved in band
+    const midA = (a0+a1)/2;
+    const nameR = (R_OUTER+R_MNAME)/2;
+    ctx.save();
+    ctx.translate(cx+Math.cos(midA)*nameR, cy+Math.sin(midA)*nameR);
+    ctx.rotate(midA + Math.PI/2);
+    ctx.fillStyle = '#fff';
+    ctx.font = `700 ${S*0.025}px 'Playfair Display',serif`;
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(MONTHS_SHORT[mi], 0, 0);
+    ctx.restore();
+
+    // register in hitmap
+    hitMap.push({a0:a0-rotation, a1:a1-rotation, label:MONTHS_FULL[mi], color, sub:`${d} dagar`});
+    cumDay += d;
+  });
+
+  // ── Month colour ring ──
+  cumDay = 0;
+  mdays.forEach((d,mi) => {
+    const a0 = dayAngle(cumDay);
+    const a1 = dayAngle(cumDay+d);
+    const [h,s,l] = hexToHsl(palette[mi]);
+
+    ctx.beginPath();
+    ctx.arc(cx,cy,R_MNAME,a0,a1);
+    ctx.arc(cx,cy,R_MSEG,a1,a0,true);
+    ctx.closePath();
+    ctx.fillStyle = hslToHex(h,s*0.6,Math.min(92,l+20));
+    ctx.fill();
+    cumDay += d;
+  });
+
+  // ── Month dividers ──
+  cumDay = 0;
+  mdays.forEach(d => {
+    const a = dayAngle(cumDay);
+    ctx.beginPath();
+    ctx.moveTo(cx+Math.cos(a)*R_PROJ_I, cy+Math.sin(a)*R_PROJ_I);
+    ctx.lineTo(cx+Math.cos(a)*R_OUTER,  cy+Math.sin(a)*R_OUTER);
+    ctx.strokeStyle='rgba(255,255,255,.85)'; ctx.lineWidth=1.8; ctx.stroke();
+    cumDay += d;
+  });
+
+  // ── Week ticks ──
+  for(let w=0;w<53;w++){
+    const doy = w*7;
+    if(doy>totalDays) break;
+    const a = dayAngle(doy);
+    ctx.beginPath();
+    ctx.moveTo(cx+Math.cos(a)*R_WEEK,  cy+Math.sin(a)*R_WEEK);
+    ctx.lineTo(cx+Math.cos(a)*R_MSEG,  cy+Math.sin(a)*R_MSEG);
+    ctx.strokeStyle='rgba(255,255,255,.55)'; ctx.lineWidth=.8; ctx.stroke();
+    // week number
+    const wr = R_WEEK - S*0.022;
+    ctx.save();
+    ctx.translate(cx+Math.cos(a)*wr, cy+Math.sin(a)*wr);
+    ctx.rotate(a+Math.PI/2);
+    ctx.fillStyle='rgba(255,255,255,.7)';
+    ctx.font=`${S*0.014}px 'DM Mono',monospace`;
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(w+1,0,0);
+    ctx.restore();
+  }
+
+  // ── Day ticks ──
+  for(let doy=1;doy<=totalDays;doy++){
+    if(doy%7===0) continue;
+    const a = dayAngle(doy);
+    ctx.beginPath();
+    ctx.moveTo(cx+Math.cos(a)*(R_MSEG-3), cy+Math.sin(a)*(R_MSEG-3));
+    ctx.lineTo(cx+Math.cos(a)*R_MSEG,     cy+Math.sin(a)*R_MSEG);
+    ctx.strokeStyle='rgba(255,255,255,.2)'; ctx.lineWidth=.4; ctx.stroke();
+  }
+
+  // ── Holidays & NC days ──
+  const holDoys = buildHolidayDOYs(YEAR);
+  const {ncFree, ncGro} = buildNcDOYs(YEAR);
+
+  Object.entries(holDoys).forEach(([doy,name]) => {
+    const d0 = parseInt(doy), d1 = d0+1;
+    const a0 = dayAngle(d0), a1 = dayAngle(d1);
+    ctx.beginPath();
+    ctx.arc(cx,cy,R_MSEG,a0,a1);
+    ctx.arc(cx,cy,R_WEEK,a1,a0,true);
+    ctx.closePath();
+    ctx.fillStyle='rgba(184,48,37,.75)'; ctx.fill();
+    hitMap.push({a0:a0-rotation,a1:a1-rotation,label:name,color:'#f88',sub:'Helligdag'});
+  });
+  Object.entries(ncFree).forEach(([doy,name]) => {
+    const d0=parseInt(doy),a0=dayAngle(d0),a1=dayAngle(d0+1);
+    ctx.beginPath();
+    ctx.arc(cx,cy,R_MSEG,a0,a1);
+    ctx.arc(cx,cy,R_WEEK,a1,a0,true);
+    ctx.closePath();
+    ctx.fillStyle='rgba(0,107,60,.7)'; ctx.fill();
+    hitMap.push({a0:a0-rotation,a1:a1-rotation,label:name,color:'#5c9',sub:'NC betalt fri'});
+  });
+  Object.entries(ncGro).forEach(([doy,name]) => {
+    const d0=parseInt(doy),a0=dayAngle(d0),a1=dayAngle(d0+1);
+    ctx.beginPath();
+    ctx.arc(cx,cy,R_MSEG,a0,a1);
+    ctx.arc(cx,cy,R_WEEK,a1,a0,true);
+    ctx.closePath();
+    ctx.fillStyle='rgba(139,69,19,.7)'; ctx.fill();
+    hitMap.push({a0:a0-rotation,a1:a1-rotation,label:name,color:'#d4956a',sub:'Gro-dagen'});
+  });
+
+  // ── Project arcs ──
+  const enabledCalIds = new Set(Object.entries(calendarMeta).filter(([,m])=>m.enabled).map(([id])=>id));
+  const gcalArcs = allEvents
+    .filter(ev => enabledCalIds.has(ev._calId||'primary'))
+    .map(ev => {
+      const sr=ev.start?.dateTime||ev.start?.date;
+      const er=ev.end?.dateTime||ev.end?.date;
+      const isAD=!ev.start?.dateTime;
+      const sd=new Date(sr+(isAD?'T12:00:00':''));
+      const ed=er?new Date(er+(isAD?'T12:00:00':'')):sd;
+      if(sd.getFullYear()!==YEAR&&ed.getFullYear()!==YEAR) return null;
+      const cs=sd.getFullYear()<YEAR?new Date(YEAR,0,1):sd;
+      const ce=ed.getFullYear()>YEAR?new Date(YEAR,11,31):ed;
+      const color=(calendarMeta[ev._calId||'primary']?.color)||'#1F547A';
+      return {title:ev.summary||'(utan tittel)',sd:cs,ed:ce,color,layer:0};
+    }).filter(Boolean);
+
+  const projArcs = projects
+    .filter(p=>p.year===YEAR||!p.year)
+    .map(p => ({
+      title:p.name, color:p.color||'#1F547A',
+      sd:new Date(p.fra+'T12:00:00'), ed:new Date(p.til+'T12:00:00'),
+      layer:p.layer||0,
+    }));
+
+  const allArcs = [...gcalArcs, ...projArcs];
+
+  allArcs.forEach(arc => {
+    const doy0 = Math.max(1, dayOfYear(arc.sd,YEAR));
+    const doy1 = Math.min(totalDays, dayOfYear(arc.ed,YEAR));
+    if(doy1<=doy0) return;
+
+    const layer = Math.min(3, Math.max(0, arc.layer||0));
+    const rOut = R_PROJ_O - layer*projLayerH + projLayerH*0.05;
+    const rIn  = R_PROJ_O - (layer+1)*projLayerH + projLayerH*0.15;
+
+    const a0 = dayAngle(doy0), a1 = dayAngle(doy1);
+    ctx.beginPath();
+    ctx.arc(cx,cy,rOut,a0,a1);
+    ctx.arc(cx,cy,rIn,a1,a0,true);
+    ctx.closePath();
+    ctx.fillStyle = arc.color+'CC';
+    ctx.fill();
+    ctx.strokeStyle=arc.color; ctx.lineWidth=.6; ctx.stroke();
+
+    // label
+    const arcLen = (a1-a0)*((rIn+rOut)/2);
+    if(arcLen>S*0.035){
+      const midA=(a0+a1)/2, midR=(rIn+rOut)/2;
+      const maxChars=Math.floor(arcLen/(S*0.008));
+      let label=arc.title;
+      if(label.length>maxChars) label=label.slice(0,Math.max(1,maxChars-1))+'…';
+      ctx.save();
+      ctx.translate(cx+Math.cos(midA)*midR, cy+Math.sin(midA)*midR);
+      ctx.rotate(midA+Math.PI/2);
+      ctx.fillStyle='#fff';
+      ctx.font=`600 ${Math.max(S*.009,Math.min(S*.016,arcLen/label.length*.55))}px 'DM Sans',sans-serif`;
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(label,0,0);
+      ctx.restore();
+      hitMap.push({a0:a0-rotation,a1:a1-rotation,label:arc.title,color:arc.color,sub:arc.sd.toLocaleDateString('nb-NO')+'  →  '+arc.ed.toLocaleDateString('nb-NO')});
+    }
+  });
+
+  // ── Outer & inner border ──
+  ctx.beginPath(); ctx.arc(cx,cy,R_OUTER,0,Math.PI*2);
+  ctx.strokeStyle='rgba(0,0,0,.07)'; ctx.lineWidth=1.5; ctx.stroke();
+
+  // ── Centre disc ──
+  ctx.beginPath(); ctx.arc(cx,cy,R_CENTER,0,Math.PI*2);
+  ctx.fillStyle='#fff'; ctx.fill();
+  ctx.strokeStyle='rgba(0,0,0,.06)'; ctx.lineWidth=1; ctx.stroke();
+
+  // Centre text
+  const [bh] = hexToHsl(baseColor);
+  ctx.fillStyle=baseColor;
+  ctx.font=`900 ${S*.038}px 'Playfair Display',serif`;
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(YEAR, cx, cy-S*.015);
+  ctx.fillStyle='#aaa';
+  ctx.font=`400 ${S*.016}px 'DM Sans',sans-serif`;
+  ctx.fillText('Norconsult', cx, cy+S*.02);
+
+  // ── TODAY needle ──
+  const now=new Date();
+  if(now.getFullYear()===YEAR){
+    const todayDoy = dayOfYear(now,YEAR);
+    const a = dayAngle(todayDoy);
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(cx+Math.cos(a)*R_CENTER, cy+Math.sin(a)*R_CENTER);
+    ctx.lineTo(cx+Math.cos(a)*R_OUTER,  cy+Math.sin(a)*R_OUTER);
+    ctx.strokeStyle='rgba(184,48,37,.9)'; ctx.lineWidth=2;
+    ctx.setLineDash([4,3]); ctx.stroke(); ctx.setLineDash([]);
+    ctx.beginPath(); ctx.arc(cx+Math.cos(a)*R_MSEG,cy+Math.sin(a)*R_MSEG,4,0,Math.PI*2);
+    ctx.fillStyle='#B83025'; ctx.fill();
+    ctx.restore();
+  }
+
+  // ── Outer ring legend (bottom) ──
+  if(Object.keys(calendarMeta).length>0){
+    const metas=Object.values(calendarMeta).filter(m=>m.enabled);
+    metas.forEach((meta,i)=>{
+      const lx=20+i*120, ly=S-14;
+      ctx.beginPath(); ctx.arc(lx+6,ly,5,0,Math.PI*2);
+      ctx.fillStyle=meta.color; ctx.fill();
+      ctx.fillStyle='#666'; ctx.font=`${S*.013}px 'DM Sans',sans-serif`;
+      ctx.textAlign='left'; ctx.textBaseline='middle';
+      ctx.fillText(meta.name,lx+15,ly);
+    });
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  PROJECT EDITOR
+// ═══════════════════════════════════════════════
+let editingProjIdx = null;
+
+function renderProjList() {
+  const list = document.getElementById('projList');
+  list.innerHTML='';
+  projects.filter(p=>p.year===YEAR||!p.year).forEach((p,i) => {
+    const div=document.createElement('div');
+    div.className='proj-item';
+    div.innerHTML=`<span class="proj-dot" style="background:${p.color}"></span>
+      <span class="proj-name">${p.name}</span>
+      <button class="proj-del" onclick="deleteProj(${i})" title="Slett">✕</button>`;
+    div.querySelector('.proj-name').onclick=()=>openProjEditor(i);
+    list.appendChild(div);
+  });
+}
+
+function openProjEditor(idx) {
+  editingProjIdx = idx;
+  const ed = document.getElementById('projEditor');
+  ed.classList.add('open');
+  if(idx!==null && projects[idx]) {
+    const p=projects[idx];
+    document.getElementById('peNavn').value=p.name||'';
+    document.getElementById('peFra').value=p.fra||`${YEAR}-01-01`;
+    document.getElementById('peTil').value=p.til||`${YEAR}-12-31`;
+    document.getElementById('peFarge').value=p.color||'#1F547A';
+    document.getElementById('peLag').value=p.layer||0;
+  } else {
+    document.getElementById('peNavn').value='';
+    document.getElementById('peFra').value=`${YEAR}-01-01`;
+    document.getElementById('peTil').value=`${YEAR}-12-31`;
+    document.getElementById('peFarge').value='#1F547A';
+    document.getElementById('peLag').value=0;
+  }
+}
+function closeProjEditor() {
+  document.getElementById('projEditor').classList.remove('open');
+  editingProjIdx=null;
+}
+function saveProj() {
+  const p = {
+    name:  document.getElementById('peNavn').value||'Nytt prosjekt',
+    fra:   document.getElementById('peFra').value,
+    til:   document.getElementById('peTil').value,
+    color: document.getElementById('peFarge').value,
+    layer: parseInt(document.getElementById('peLag').value),
+    year:  YEAR,
+  };
+  if(editingProjIdx!==null) projects[editingProjIdx]=p;
+  else projects.push(p);
+  localStorage.setItem('nc_projects', JSON.stringify(projects));
+  closeProjEditor();
+  renderProjList();
+  drawWheel();
+}
+function deleteProj(idx) {
+  projects.splice(idx,1);
+  localStorage.setItem('nc_projects', JSON.stringify(projects));
+  renderProjList(); drawWheel();
+}
+
+// ═══════════════════════════════════════════════
+//  YEAR NAV
+// ═══════════════════════════════════════════════
+function initYearNav() {
+  const row=document.getElementById('yearRow');
+  row.innerHTML='';
+  for(let y=2026;y<=2031;y++){
+    const btn=document.createElement('button');
+    btn.className='year-btn'+(y===YEAR?' active':'');
+    btn.textContent=y;
+    btn.onclick=()=>{
+      YEAR=y;
+      document.getElementById('hdrYear').textContent=y;
+      document.getElementById('linkKal').href=`kalender-norconsult-${y}.html`;
+      document.querySelectorAll('.year-btn').forEach(b=>b.classList.toggle('active',parseInt(b.textContent)===y));
+      renderProjList();
+      if(gcalToken) fetchAllEvents(); else drawWheel();
+    };
+    row.appendChild(btn);
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  PRINT / PDF
+// ═══════════════════════════════════════════════
+const FMTS=[{id:'A4',w:190,h:277},{id:'A3',w:277,h:390},{id:'A2',w:390,h:554},{id:'A1',w:554,h:784}];
+let pdfFmt='A4', pdfOrient='p';
+
+function initPrintFmts(){
+  const row=document.getElementById('fmtRow');
+  FMTS.forEach(f=>{
+    const btn=document.createElement('button');
+    btn.className='fmt-btn'+(f.id===pdfFmt?' active':'');
+    btn.textContent=f.id;
+    btn.onclick=()=>{pdfFmt=f.id;document.querySelectorAll('#fmtRow .fmt-btn').forEach(b=>b.classList.toggle('active',b.textContent===f.id));};
+    row.appendChild(btn);
+  });
+}
+function setOrient(o){
+  pdfOrient=o;
+  document.getElementById('orientP').classList.toggle('active',o==='p');
+  document.getElementById('orientL').classList.toggle('active',o==='l');
+}
+function doPrint(){
+  const f=FMTS.find(x=>x.id===pdfFmt);
+  const pw=pdfOrient==='p'?f.w:f.h, ph=pdfOrient==='p'?f.h:f.w;
+  let el=document.getElementById('printStyle');
+  if(!el){el=document.createElement('style');el.id='printStyle';document.head.appendChild(el);}
+  el.textContent=`@page{size:${pw}mm ${ph}mm;margin:12mm;}#wheelCanvas{width:${pw-24}mm!important;height:${pw-24}mm!important;}`;
+  window.print();
+}
+
+// ═══════════════════════════════════════════════
+//  GOOGLE CALENDAR
+// ═══════════════════════════════════════════════
+function gcalSignIn(){
+  const client=google.accounts.oauth2.initTokenClient({
+    client_id:GCAL_CLIENT_ID, scope:GCAL_SCOPE,
+    callback:async resp=>{
+      if(resp.error){console.error(resp.error);return;}
+      gcalToken=resp.access_token;
+      document.getElementById('gcalLoggedOut').style.display='none';
+      document.getElementById('gcalLoggedIn').style.display='block';
+      document.getElementById('gcalStatus').textContent='Hentar kalendarar…';
+      await fetchCalList();
+      await fetchAllEvents();
+    }
+  });
+  client.requestAccessToken();
+}
+function gcalSignOut(){
+  if(gcalToken)google.accounts.oauth2.revoke(gcalToken,()=>{});
+  gcalToken=null;allEvents=[];calendarMeta={};
+  document.getElementById('gcalLoggedOut').style.display='block';
+  document.getElementById('gcalLoggedIn').style.display='none';
+  document.getElementById('calList').innerHTML='';
+  drawWheel();
+}
+async function fetchCalList(){
+  const res=await fetch('https://www.googleapis.com/calendar/v3/users/me/calendarList',{headers:{Authorization:'Bearer '+gcalToken}});
+  const d=await res.json();
+  calendarMeta={};
+  (d.items||[]).forEach(c=>{calendarMeta[c.id]={name:c.summary,color:c.backgroundColor||'#1F547A',enabled:true};});
+  buildCalList();
+}
+function buildCalList(){
+  const list=document.getElementById('calList');
+  list.innerHTML='';
+  Object.entries(calendarMeta).forEach(([id,meta])=>{
+    const div=document.createElement('div');
+    div.className='cal-toggle-item on';
+    div.innerHTML=`<span class="cal-toggle-dot" style="background:${meta.color}"></span>
+      <span class="cal-toggle-name">${meta.name}</span>
+      <span class="cal-toggle-check">✓</span>`;
+    div.onclick=()=>{meta.enabled=!meta.enabled;div.classList.toggle('on',meta.enabled);drawWheel();};
+    list.appendChild(div);
+  });
+}
+async function fetchAllEvents(){
+  const ids=Object.keys(calendarMeta);
+  const tMin=new Date(YEAR,0,1).toISOString();
+  const tMax=new Date(YEAR,11,31,23,59,59).toISOString();
+  document.getElementById('gcalStatus').textContent=`Hentar frå ${ids.length} kal…`;
+  const results=await Promise.all(ids.map(async id=>{
+    try{
+      const url=`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(id)}/events?timeMin=${encodeURIComponent(tMin)}&timeMax=${encodeURIComponent(tMax)}&singleEvents=true&orderBy=startTime&maxResults=2500`;
+      const r=await fetch(url,{headers:{Authorization:'Bearer '+gcalToken}});
+      if(!r.ok)return[];
+      const d=await r.json();
+      return(d.items||[]).map(ev=>({...ev,_calId:id}));
+    }catch{return[];}
+  }));
+  allEvents=results.flat();
+  document.getElementById('gcalStatus').textContent=`${allEvents.length} hendingar`;
+  drawWheel();
+}
+
+// ═══════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════
+initYearNav();
+buildSchemeGrid();
+initPrintFmts();
+renderProjList();
+resizeCanvas();
+</script>
+</body>
+</html>

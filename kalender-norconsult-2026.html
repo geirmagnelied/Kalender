@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Norconsult Arbeidskalender 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS ── */
+:root {
+  --bg:           #F2EDE3;
+  --paper:        #FDFAF3;
+  --ink:          #1C1814;
+  --ink-soft:     #4C4640;
+  --ink-muted:    #A09890;
+  --red:          #B83025;
+  --red-light:    #FAF0EE;
+  --blue:         #1F547A;
+  --blue-light:   #EBF2F8;
+  --gold:         #B08C22;
+  --wkend-bg:     #F5F0E6;
+  --today-bg:     #FFFAE8;
+  --today-ring:   #D4A017;
+  --border:       #DDD7CB;
+  --border-light: #EAE5DA;
+  --norconsult:       #006B3C;
+  --norconsult-light: #E6F4EE;
+  --gro-color:        #8B4513;
+  --gro-light:        #FDF0E6;
+  --green:            #2a7a3a;
+}
+
+/* Norconsult bedriftsfridagar */
+.day.nc-free        { background: var(--norconsult-light); }
+.day.nc-free .dn    { color: var(--norconsult); font-weight: 700; }
+.day.nc-free .hl    { color: var(--norconsult); }
+.day.nc-gro         { background: var(--gro-light); }
+.day.nc-gro .dn     { color: var(--gro-color); font-weight: 700; }
+.day.nc-gro .hl     { color: var(--gro-color); }
+.ld-nc  { background: var(--norconsult); }
+.ld-gro { background: var(--gro-color); }
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); font-family: 'DM Sans', sans-serif; color: var(--ink); min-height: 100vh; }
+
+/* ══════════════════════════════════════════
+   HEADER  (two-row on desktop, compact on mobile)
+══════════════════════════════════════════ */
+.site-header {
+  position: sticky; top: 0; z-index: 200;
+  background: var(--ink);
+  border-bottom: 3px solid var(--gold);
+}
+.hdr-top {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px; height: 50px; gap: 12px;
+}
+.site-header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem; font-weight: 900;
+  color: #fff; letter-spacing: 0.04em; white-space: nowrap; flex-shrink: 0;
+}
+.site-header h1 em { color: var(--gold); font-style: normal; }
+
+/* year links row */
+.year-nav {
+  display: flex; gap: 5px; align-items: center; flex-shrink: 0;
+}
+.year-nav a {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem; font-weight: 500;
+  color: #aaa; text-decoration: none;
+  padding: 3px 8px;
+  border: 1px solid #444; border-radius: 3px;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+.year-nav a:hover          { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+.year-nav a.current-year   { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+
+/* month nav row */
+.hdr-months {
+  display: flex; align-items: center; gap: 5px;
+  padding: 5px 20px 7px; flex-wrap: wrap;
+  border-top: 1px solid rgba(255,255,255,0.07);
+}
+.hdr-months span {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem; color: rgba(255,255,255,0.3);
+  letter-spacing: 0.05em; text-transform: uppercase;
+  margin-right: 4px; white-space: nowrap;
+}
+.month-nav { display: flex; gap: 4px; flex-wrap: wrap; }
+.month-nav a {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.64rem; font-weight: 500;
+  color: #bbb; text-decoration: none;
+  padding: 2px 7px;
+  border: 1px solid #3a3a3a; border-radius: 3px;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.month-nav a:hover { background: rgba(255,255,255,0.12); color: #fff; }
+
+/* ══════════════════════════════════════════
+   LEGEND + GCAL BAR
+══════════════════════════════════════════ */
+.legend {
+  background: var(--paper);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; flex-wrap: wrap;
+  padding: 0 20px; gap: 16px; min-height: 40px;
+}
+.legend-item { display: flex; align-items: center; gap: 7px; font-size: 0.74rem; color: var(--ink-soft); }
+.legend-dot  { width: 13px; height: 13px; border-radius: 3px; flex-shrink: 0; }
+.ld-h  { background: var(--red); }
+.ld-w  { background: var(--wkend-bg); border: 1px solid var(--border); }
+.ld-t  { background: var(--today-bg); border: 2px solid var(--today-ring); }
+.ld-gc { background: var(--blue); border-radius: 50%; }
+.legend-sep  { flex: 1; }
+.legend-note { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--ink-muted); }
+.legend-divider { width: 1px; height: 24px; background: var(--border); flex-shrink: 0; }
+
+/* compact GCal strip inside legend bar */
+.gcal-strip { display: flex; align-items: center; flex-shrink: 0; }
+.gcal-strip-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+
+.gcal-strip-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid var(--border); border-radius: 4px;
+  padding: 4px 10px;
+  font-family: 'DM Sans', sans-serif; font-size: 0.7rem; font-weight: 600;
+  cursor: pointer; transition: all 0.15s; white-space: nowrap;
+}
+.gcal-strip-btn.signin  { background: var(--blue); color: #fff; border-color: var(--blue); }
+.gcal-strip-btn.signin:hover  { background: #174060; }
+.gcal-strip-btn.signout { background: none; color: var(--ink-muted); }
+.gcal-strip-btn.signout:hover { border-color: var(--red); color: var(--red); }
+.gcal-strip-btn.events-toggle { background: none; color: var(--blue); border-color: var(--blue); }
+.gcal-strip-btn.events-toggle:hover { background: var(--blue-light); }
+.gcal-strip-btn.events-toggle.open { background: var(--blue); color: #fff; }
+
+.gcal-strip-status {
+  font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--green);
+}
+
+/* calendar toggle pills in strip */
+.cal-toggles {
+  display: flex; flex-wrap: wrap; gap: 4px;
+}
+.cal-toggle {
+  display: inline-flex; align-items: center; gap: 5px;
+  border: 1px solid var(--border); border-radius: 20px;
+  padding: 2px 8px;
+  font-family: 'DM Sans', sans-serif; font-size: 0.65rem; font-weight: 500;
+  cursor: pointer; background: var(--paper); color: var(--ink-soft);
+  transition: all 0.15s; user-select: none;
+}
+.cal-toggle:hover { border-color: var(--blue); color: var(--blue); }
+.cal-toggle.active { background: var(--blue-light); border-color: var(--blue); color: var(--blue); font-weight: 600; }
+.cal-toggle .cal-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+/* collapsible events panel */
+.events-panel {
+  background: var(--paper);
+  border-bottom: 2px solid var(--blue);
+}
+.events-panel-inner {
+  padding: 12px 20px 16px;
+  max-height: 220px;
+}
+.events-panel-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.9rem; font-weight: 700;
+  color: var(--ink); margin-bottom: 8px;
+}
+.gcal-events {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 5px; overflow: hidden;
+  max-height: 160px; overflow-y: auto;
+}
+.gcal-events:empty { display: none; }
+.gcal-ev {
+  padding: 6px 12px;
+  border-top: 1px solid var(--border-light);
+  display: flex; gap: 8px; align-items: baseline;
+  cursor: pointer;
+}
+.gcal-ev:first-child { border-top: none; }
+.gcal-ev:hover { background: var(--blue-light); }
+.gcal-ev-cal  { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+.gcal-ev-date { font-family: 'DM Mono', monospace; font-size: 0.63rem; color: var(--ink-muted); white-space: nowrap; flex-shrink: 0; width: 58px; }
+.gcal-ev-title { font-size: 0.76rem; font-weight: 500; color: var(--ink); line-height: 1.3; }
+.gcal-ev-title.allday { color: var(--blue); }
+.gcal-hint { font-family: 'DM Mono', monospace; font-size: 0.58rem; color: var(--ink-muted); margin-top: 8px; line-height: 1.6; }
+
+/* ══════════════════════════════════════════
+   CALENDAR GRID  — 6 cols desktop
+══════════════════════════════════════════ */
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 13px;
+  padding: 16px 18px 20px;
+}
+
+/* ── MONTH CARD ── */
+.month-card {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 7px; overflow: hidden;
+  display: flex; flex-direction: column;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.055);
+  transition: box-shadow 0.2s;
+}
+.month-card:hover { box-shadow: 0 5px 22px rgba(0,0,0,0.11); }
+
+.m-head {
+  background: var(--ink); color: #fff;
+  padding: 9px 12px 7px;
+  display: flex; justify-content: space-between; align-items: baseline;
+}
+.m-name { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; letter-spacing: 0.02em; }
+.m-tag  { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--gold); font-weight: 500; }
+
+.dow-row {
+  display: grid;
+  grid-template-columns: 26px repeat(7, 1fr);
+  background: var(--blue);
+}
+.dow-cell {
+  text-align: center; padding: 4px 1px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem; font-weight: 500;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  color: rgba(255,255,255,0.82);
+}
+.dow-cell.wk-lbl  { color: rgba(255,255,255,0.35); font-size: 0.5rem; }
+.dow-cell.sat-col,
+.dow-cell.sun-col  { color: rgba(255,255,255,0.52); }
+
+.weeks { flex: 1; }
+.week-row { display: grid; grid-template-columns: 26px repeat(7, 1fr); }
+.week-row + .week-row { border-top: 1px solid var(--border-light); }
+
+.wk-num {
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.5rem; font-weight: 500; color: var(--ink-muted);
+  border-right: 1px solid var(--border-light);
+  background: rgba(0,0,0,0.018);
+}
+
+.day {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-start;
+  padding: 7px 1px 5px;
+  min-height: 62px;
+  cursor: default;
+  transition: background 0.12s;
+}
+.day:hover:not(.empty) { background: var(--blue-light); }
+.day.empty   { pointer-events: none; }
+.day.wkend   { background: var(--wkend-bg); }
+.day.hol     { background: var(--red-light); }
+.day.today   {
+  background: var(--today-bg);
+  outline: 2px solid var(--today-ring);
+  outline-offset: -2px;
+  border-radius: 2px;
+}
+
+.dn {
+  font-family: 'DM Mono', monospace;
+  font-size: 1rem; font-weight: 500; line-height: 1; color: var(--ink);
+}
+.day.wkend .dn { color: var(--ink-soft); }
+.day.hol   .dn { color: var(--red); font-weight: 700; }
+.day.today .dn { color: var(--today-ring); font-weight: 700; }
+.day.empty .dn { opacity: 0; }
+
+.hl {
+  font-size: 0.49rem; line-height: 1.25;
+  color: var(--red); font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  text-align: center; margin-top: 3px;
+  max-width: 100%; word-break: break-word; hyphens: auto;
+}
+
+/* GCal dot on calendar day */
+.day.has-event::after {
+  content: '';
+  display: block;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--blue);
+  margin-top: 3px;
+}
+
+/* ══════════════════════════════════════════
+   BOTTOM SECTION: holidays + date calculator
+══════════════════════════════════════════ */
+.bottom-wrap {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+  padding: 20px 18px 40px;
+  flex-wrap: wrap;
+}
+
+/* ── Holiday table ── */
+.htable-block { flex: 0 0 auto; width: 380px; }
+.htable-block h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem; font-weight: 700; color: var(--ink);
+  display: inline-block;
+  border-bottom: 2px solid var(--gold);
+  padding-bottom: 5px; margin-bottom: 10px;
+}
+.htable {
+  width: 100%; border-collapse: collapse;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 6px; overflow: hidden;
+  font-size: 0.8rem;
+}
+.htable thead tr { background: var(--ink); color: #fff; }
+.htable th {
+  padding: 7px 12px; text-align: left;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem; font-weight: 500;
+  letter-spacing: 0.09em; text-transform: uppercase;
+}
+.htable td { padding: 6px 12px; border-top: 1px solid var(--border-light); }
+.htable tr:hover td { background: var(--blue-light); }
+.htable td.dt { font-family: 'DM Mono', monospace; font-size: 0.74rem; color: var(--ink-soft); white-space: nowrap; }
+.htable td.nm { font-weight: 600; }
+.htable td.dw { color: var(--ink-muted); font-size: 0.74rem; }
+.htable tr.gone td { opacity: 0.42; }
+.htable tr.next td.dt { color: var(--red); font-weight: 700; }
+
+/* ── Date calculator inline block ── */
+.datecalc-block { flex: 1; min-width: 560px; }
+.datecalc-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem; font-weight: 700; color: var(--ink);
+  display: inline-block;
+  border-bottom: 2px solid var(--gold);
+  padding-bottom: 5px; margin-bottom: 14px;
+}
+
+/* ── GCal old styles cleanup (no longer used as a block) ── */
+.gcal-block, .gcal-btns, .gcal-btn { display: none !important; }
+
+/* ══════════════════════════════════════════
+   DAY POPUP
+══════════════════════════════════════════ */
+.day.clickable { cursor: pointer; }
+.day.clickable:hover { background: var(--blue-light) !important; }
+
+/* backdrop */
+.popup-backdrop {
+  display: none;
+  position: fixed; inset: 0; z-index: 500;
+  background: rgba(0,0,0,0.25);
+  backdrop-filter: blur(2px);
+}
+.popup-backdrop.open { display: block; }
+
+/* popup box */
+.popup {
+  position: fixed; z-index: 600;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 12px 48px rgba(0,0,0,0.22);
+  width: 320px; max-width: calc(100vw - 32px);
+  overflow: hidden;
+  transform: scale(0.93) translateY(-6px);
+  opacity: 0;
+  transition: transform 0.18s ease, opacity 0.18s ease;
+  pointer-events: none;
+}
+.popup.open {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.popup-head {
+  background: var(--ink); color: #fff;
+  padding: 12px 16px 10px;
+  display: flex; justify-content: space-between; align-items: baseline;
+}
+.popup-date {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem; font-weight: 700;
+}
+.popup-dow {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem; color: var(--gold);
+}
+.popup-close {
+  background: none; border: none; color: rgba(255,255,255,0.6);
+  font-size: 1.2rem; cursor: pointer; line-height: 1;
+  padding: 0 0 0 12px;
+  transition: color 0.1s;
+}
+.popup-close:hover { color: #fff; }
+
+.popup-body { padding: 10px 0 6px; max-height: 60vh; overflow-y: auto; }
+
+/* holiday row inside popup */
+.popup-holiday {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 16px;
+  background: var(--red-light);
+  border-bottom: 1px solid var(--border-light);
+}
+.popup-holiday-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--red); flex-shrink: 0;
+}
+.popup-holiday-name {
+  font-size: 0.82rem; font-weight: 700; color: var(--red);
+}
+
+/* event row inside popup */
+.popup-event {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 9px 16px;
+  border-bottom: 1px solid var(--border-light);
+  transition: background 0.1s;
+}
+.popup-event:last-child { border-bottom: none; }
+.popup-event:hover { background: var(--blue-light); }
+
+.popup-ev-dot {
+  width: 9px; height: 9px; border-radius: 50%;
+  flex-shrink: 0; margin-top: 4px;
+}
+.popup-ev-info { flex: 1; min-width: 0; }
+.popup-ev-title {
+  font-size: 0.84rem; font-weight: 600; color: var(--ink);
+  line-height: 1.3; word-break: break-word;
+}
+.popup-ev-title.allday { color: var(--blue); }
+.popup-ev-time {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem; color: var(--ink-muted);
+  margin-top: 2px;
+}
+.popup-ev-cal {
+  font-size: 0.62rem; color: var(--ink-muted); margin-top: 1px;
+}
+.popup-ev-desc {
+  font-size: 0.72rem; color: var(--ink-soft);
+  margin-top: 3px; line-height: 1.4;
+  white-space: pre-wrap; word-break: break-word;
+}
+
+.popup-empty {
+  padding: 14px 16px;
+  font-size: 0.8rem; color: var(--ink-muted);
+  font-family: 'DM Mono', monospace;
+}
+
+/* ── FOOTER ── */
+footer {
+  text-align: center; padding: 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem; color: var(--ink-muted);
+  border-top: 1px solid var(--border);
+}
+
+/* ══════════════════════════════════════════
+   MOBILE SCALING  (≤ 700 px)
+   One column, scrollable, bigger tap targets
+══════════════════════════════════════════ */
+@media (max-width: 700px) {
+  /* header */
+  .hdr-top { padding: 0 12px; height: 46px; }
+  .site-header h1 { font-size: 1rem; }
+  .year-nav a { font-size: 0.6rem; padding: 2px 6px; }
+  .hdr-months { padding: 4px 12px 6px; }
+  .month-nav a { font-size: 0.6rem; padding: 2px 5px; }
+
+  /* legend */
+  .legend { padding: 6px 12px; gap: 12px; }
+  .legend-item { font-size: 0.7rem; }
+  .legend-note { display: none; }
+
+  /* single column calendar */
+  .cal-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 10px 10px 14px;
+  }
+
+  /* bigger day cells for fingers */
+  .day { min-height: 52px; padding: 6px 2px 4px; }
+  .dn  { font-size: 1.1rem; }
+  .hl  { font-size: 0.52rem; }
+
+  /* DOW & week numbers a touch larger */
+  .dow-cell { font-size: 0.62rem; padding: 5px 1px; }
+  .wk-num   { font-size: 0.52rem; }
+
+  /* bottom section stacks */
+  .bottom-wrap { flex-direction: column; padding: 12px 10px 36px; gap: 20px; }
+  .htable-block { width: 100%; }
+  .datecalc-block { min-width: 0; width: 100%; }
+  .datecalc-inner { flex-direction: column; gap: 12px; }
+  .datecalc-result-col { padding-top: 0; }
+  .datecalc-arrow { display: none; }
+  .mini-cal { width: 100%; }
+  .legend-divider, .legend-note { display: none; }
+  .gcal-strip { flex-wrap: wrap; }
+}
+
+/* tablet: 2 columns */
+@media (min-width: 701px) and (max-width: 1100px) {
+  .cal-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* medium desktop: 3 columns */
+@media (min-width: 1101px) and (max-width: 1400px) {
+  .cal-grid { grid-template-columns: repeat(3, 1fr); }
+}
+/* ══════════════════════════════════════════
+   DATE CALCULATOR – compact, uses main calendar
+══════════════════════════════════════════ */
+.datecalc-wrap { display: none; }
+
+.datecalc-block { flex: 1; min-width: 340px; }
+.datecalc-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem; font-weight: 700; color: var(--ink);
+  display: inline-block;
+  border-bottom: 2px solid var(--gold);
+  padding-bottom: 5px; margin-bottom: 14px;
+}
+
+/* column wrapper – result snaps to same width as pickers row */
+.dc-col {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+/* picker buttons row */
+.dc-pickers {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.dc-pick-btn {
+  display: flex; flex-direction: column; align-items: flex-start;
+  gap: 2px;
+  background: var(--paper);
+  border: 2px solid var(--border);
+  border-radius: 7px;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+  min-width: 160px;
+  text-align: left;
+}
+.dc-pick-btn:hover   { border-color: var(--blue); }
+.dc-pick-btn.active  {
+  border-color: var(--blue);
+  background: var(--blue-light);
+  box-shadow: 0 0 0 3px rgba(31,84,122,0.15);
+}
+.dc-pick-btn.has-val { border-color: var(--blue); }
+.dc-pick-btn.from-set { border-color: var(--blue); }
+.dc-pick-btn.to-set   { border-color: var(--green); }
+
+.dc-pick-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem; font-weight: 500;
+  color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.07em;
+}
+.dc-pick-val {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem; font-weight: 600; color: var(--ink-soft);
+  line-height: 1.2;
+}
+.dc-pick-btn.from-set .dc-pick-val { color: var(--blue); }
+.dc-pick-btn.to-set   .dc-pick-val { color: var(--green); }
+.dc-pick-btn.active   .dc-pick-val { color: var(--blue); }
+
+.dc-arrow {
+  font-size: 1.3rem; color: var(--border); flex-shrink: 0;
+}
+
+.dc-action-btn {
+  background: none; border: 1px solid var(--border); border-radius: 5px;
+  width: 32px; height: 32px; font-size: 0.9rem;
+  cursor: pointer; color: var(--ink-muted);
+  transition: all 0.15s; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.dc-action-btn.swap:hover  { border-color: var(--blue); color: var(--blue); }
+.dc-action-btn.clear:hover { border-color: var(--red);  color: var(--red); }
+
+/* instruction hint */
+.dc-hint {
+  font-family: 'DM Mono', monospace; font-size: 0.68rem;
+  color: var(--blue); background: var(--blue-light);
+  border: 1px solid var(--blue); border-radius: 5px;
+  padding: 6px 12px; margin-bottom: 10px;
+  animation: dcPulse 1.8s ease-in-out infinite;
+}
+@keyframes dcPulse {
+  0%,100% { opacity: 1; }
+  50%      { opacity: 0.6; }
+}
+
+/* result box – stretches to match pickers row width */
+.dc-result {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 18px;
+  width: 100%;
+}
+.dc-result-placeholder {
+  font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--ink-muted);
+}
+
+/* result content */
+.dc-result-row {
+  display: flex; gap: 16px; flex-wrap: wrap; align-items: stretch;
+}
+.dc-result-item {
+  flex: 1; min-width: 120px;
+  background: var(--paper); border: 1px solid var(--border);
+  border-radius: 6px; padding: 10px 14px; text-align: center;
+}
+.dc-result-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem; font-weight: 900; line-height: 1;
+  color: var(--blue);
+}
+.dc-result-num.workdays { color: var(--green); }
+.dc-result-lbl {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.68rem; color: var(--ink-muted); margin-top: 3px;
+}
+.dc-result-detail {
+  font-family: 'DM Mono', monospace; font-size: 0.6rem;
+  color: var(--ink-muted); margin-top: 5px; line-height: 1.6;
+}
+.dc-result-range {
+  font-family: 'DM Mono', monospace; font-size: 0.62rem;
+  color: var(--ink-soft); margin-top: 10px; text-align: center;
+}
+
+/* highlight on main calendar when picker active */
+.cal-grid.picking-mode .day:not(.empty):hover {
+  cursor: crosshair !important;
+  outline: 2px solid var(--blue);
+  outline-offset: -2px;
+}
+.day.dc-range-from { background: rgba(31,84,122,0.18) !important; }
+.day.dc-range-to   { background: rgba(42,122,58,0.18) !important; }
+.day.dc-in-range   { background: rgba(31,84,122,0.07) !important; }
+
+@media (max-width: 700px) {
+  .datecalc-block { min-width: 0; width: 100%; }
+  .dc-pickers { gap: 6px; }
+  .dc-pick-btn { min-width: 130px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<header class="site-header">
+  <div class="hdr-top">
+    <h1>Norconsult <em id="hdrYear">2026</em></h1>
+    <nav class="year-nav" id="yearNav">
+      <a href="aarshjul.html" style="background:rgba(176,140,34,0.15);border-color:var(--gold);color:var(--gold);">🌀 Årshjul</a>
+    </nav>
+  </div>
+  <div class="hdr-months">
+    <span>Gå til:</span>
+    <nav class="month-nav" id="mNav"></nav>
+  </div>
+</header>
+
+<!-- ══ LEGEND + GCAL BAR ══ -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot ld-h"></div>Helligdag</div>
+  <div class="legend-item"><div class="legend-dot ld-w"></div>Helg</div>
+  <div class="legend-item"><div class="legend-dot ld-t"></div>I dag</div>
+  <div class="legend-item"><div class="legend-dot ld-nc"></div>Norconsult fri (betalt)</div>
+  <div class="legend-item"><div class="legend-dot ld-gro"></div>Gro-dagen (ferie)</div>
+  <div class="legend-item"><div class="legend-dot ld-gc"></div>Google-hending</div>
+  <div class="legend-sep"></div>
+  <span class="legend-note">Vk = ISO-vekenummer · Veke startar måndag</span>
+  <div class="legend-divider"></div>
+
+  <!-- Compact GCal strip -->
+  <div class="gcal-strip">
+    <!-- Logged out -->
+    <div id="gcalStripLoggedOut" class="gcal-strip-row">
+      <button class="gcal-strip-btn signin" id="gcalSignIn" onclick="gcalSignIn()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style="flex-shrink:0">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Koble til Google Calendar
+      </button>
+    </div>
+    <!-- Logged in -->
+    <div id="gcalStripLoggedIn" class="gcal-strip-row" style="display:none;">
+      <div class="cal-toggles" id="calToggles"></div>
+      <div id="gcalStatus" class="gcal-strip-status"></div>
+      <button class="gcal-strip-btn events-toggle" id="gcalEventsToggle" onclick="toggleEventsPanel()">
+        📋 Hendingar
+      </button>
+      <button class="gcal-strip-btn signout" id="gcalSignOut" onclick="gcalSignOut()">Logg ut</button>
+    </div>
+  </div>
+</div>
+
+<!-- Collapsible events panel -->
+<div class="events-panel" id="eventsPanel" style="display:none;">
+  <div class="events-panel-inner">
+    <div class="events-panel-title">Google Calendar – hendingar <span id="gcalYear">2026</span></div>
+    <div id="gcalEvents" class="gcal-events"></div>
+    <p class="gcal-hint" id="gcalHint">Etter innlogging visast hendingane her og som blå prikkar i kalenderen.</p>
+  </div>
+</div>
+
+<!-- ══ CALENDAR ══ -->
+<div class="cal-grid" id="calGrid"></div>
+
+<!-- ══ BOTTOM: holidays + date calculator ══ -->
+<div class="bottom-wrap">
+
+  <!-- Holiday table -->
+  <div class="htable-block">
+    <h2>Fridagar <span id="htYear">2026</span></h2>
+    <table class="htable">
+      <thead><tr><th>Dato</th><th>Dag</th><th>Ukedag</th><th>Type</th></tr></thead>
+      <tbody id="htBody"></tbody>
+    </table>
+  </div>
+
+  <!-- Date calculator – compact, uses main calendar as picker -->
+  <div class="datecalc-block">
+    <h2 class="datecalc-title">Datokalkulatoren</h2>
+    <div class="dc-col">
+      <div class="dc-pickers">
+        <button class="dc-pick-btn" id="dcBtnFrom" onclick="dcActivate('from')">
+          <span class="dc-pick-label">Frå dato</span>
+          <span class="dc-pick-val" id="dcValFrom">Klikk ein dag i kalenderen</span>
+        </button>
+        <div class="dc-arrow">→</div>
+        <button class="dc-pick-btn" id="dcBtnTo" onclick="dcActivate('to')">
+          <span class="dc-pick-label">Til dato</span>
+          <span class="dc-pick-val" id="dcValTo">Klikk ein dag i kalenderen</span>
+        </button>
+        <button class="dc-action-btn swap" onclick="swapDates()" title="Bytt">⇄</button>
+        <button class="dc-action-btn clear" onclick="clearDates()" title="Nullstill">✕</button>
+      </div>
+      <div class="dc-hint" id="dcHint" style="display:none;"></div>
+      <div class="dc-result" id="calcResult">
+        <span class="dc-result-placeholder">Vel frå- og til-dato i kalenderen over</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>Norsk årskalender · Helligdagar etter norsk lov · ISO 8601 vekenummer</footer>
+
+<!-- ══ DAY POPUP ══ -->
+<div class="popup-backdrop" id="popupBackdrop" onclick="closePopup()"></div>
+<div class="popup" id="popup">
+  <div class="popup-head">
+    <span class="popup-date" id="popupDate"></span>
+    <span class="popup-dow"  id="popupDow"></span>
+    <button class="popup-close" onclick="closePopup()">✕</button>
+  </div>
+  <div class="popup-body" id="popupBody"></div>
+</div>
+
+<!-- Google Identity Services -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+<script>
+// ════════════════════════════════════════════════════
+//  CONFIG  — bytt ut med din eigen OAuth Client ID
+//  Sjå kommentaren i forrige versjon for oppsett.
+// ════════════════════════════════════════════════════
+const GCAL_CLIENT_ID = '63976458153-ff4fg9r0u0u7536dsjkg1ftt8chtrmoq.apps.googleusercontent.com';
+const GCAL_SCOPE     = 'https://www.googleapis.com/auth/calendar.readonly';
+
+// ── YEAR: read from URL hash, e.g. kalender-2026.html#2027 ──
+const URL_YEAR  = parseInt(location.hash.replace('#','')) || 2026;
+const YEAR      = (URL_YEAR >= 2026 && URL_YEAR <= 2031) ? URL_YEAR : 2026;
+
+document.getElementById('hdrYear').textContent  = YEAR;
+document.getElementById('htYear').textContent   = YEAR;
+document.getElementById('gcalYear').textContent = YEAR;
+document.title = `Årskalender ${YEAR}`;
+
+// ── HOLIDAYS (computed per year) ──
+function computeEaster(y) {
+  // Meeus/Jones/Butcher
+  const a=y%19, b=Math.floor(y/100), c=y%100;
+  const d=Math.floor(b/4), e=b%4, f=Math.floor((b+8)/25);
+  const g=Math.floor((b-f+1)/3), h=(19*a+b-d-g+15)%30;
+  const i=Math.floor(c/4), k=c%4, l=(32+2*e+2*i-h-k)%7;
+  const m=Math.floor((a+11*h+22*l)/451);
+  const month=Math.floor((h+l-7*m+114)/31);
+  const day=((h+l-7*m+114)%31)+1;
+  return new Date(y, month-1, day);
+}
+
+function addDays(date, n) {
+  const d = new Date(date); d.setDate(d.getDate()+n); return d;
+}
+
+function buildHolidays(y) {
+  const easter = computeEaster(y);
+  const fmt = d => iso(d.getFullYear(), d.getMonth()+1, d.getDate());
+  return {
+    [iso(y,1,1)]:               'Nyttårsdag',
+    [fmt(addDays(easter,-3))]:  'Skjærtorsdag',
+    [fmt(addDays(easter,-2))]:  'Langfredag',
+    [fmt(easter)]:              '1. påskedag',
+    [fmt(addDays(easter,1))]:   '2. påskedag',
+    [iso(y,5,1)]:               'Arbeidernes dag',
+    [fmt(addDays(easter,39))]:  'Kristi himmelfartsdag',
+    [iso(y,5,17)]:              'Grunnlovsdagen',
+    [fmt(addDays(easter,49))]:  '1. pinsedag',
+    [fmt(addDays(easter,50))]:  '2. pinsedag',
+    [iso(y,12,25)]:             '1. juledag',
+    [iso(y,12,26)]:             '2. juledag',
+  };
+}
+
+const HOLIDAYS = buildHolidays(YEAR);
+
+// ── NORCONSULT BEDRIFTSFRIDAGAR ──
+// Betalt fri (grøn) og Gro-dagen (brun/ferie)
+const NC_FREE = {
+  // Påskeveka: måndag + tysdag = Norconsult betaler 2 av 3 dagar
+  '2026-03-30': 'NC fri (påske)',
+  '2026-03-31': 'NC fri (påske)',
+  // Julaftan
+  '2026-12-24': 'Julaftan (NC fri)',
+  // Romjul og nyttårsaftan
+  '2026-12-28': 'Romjul (NC fri)',
+  '2026-12-29': 'Romjul (NC fri)',
+  '2026-12-30': 'Romjul (NC fri)',
+  '2026-12-31': 'Nyttårsaftan (NC fri)',
+};
+const NC_GRO = {
+  // Onsdag i påskeveka = «Gro-dagen» (fastsett feriedag)
+  '2026-04-01': 'Gro-dagen',
+};
+
+// Sommertid 2026: veke 23-33, måndag 1. juni – søndag 16. august
+// 7 timar/dag i sommartid, 8 timar/dag elles
+const NC_SOMM_START = '2026-06-01';
+const NC_SOMM_END   = '2026-08-16';
+const NC_T_NORM = 8;   // timar per dag utanfor sommartid
+const NC_T_SOMM = 7;   // timar per dag i sommartid
+
+// ── CONSTANTS ──
+const MONTHS  = ['Januar','Februar','Mars','April','Mai','Juni','Juli','August','September','Oktober','November','Desember'];
+const DOW_HDR = ['Vk','Ma','Ti','On','To','Fr','Lø','Sø'];
+const DOW_NB  = ['søndag','måndag','tysdag','onsdag','torsdag','fredag','laurdag'];
+
+function iso(y,m,d) { return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
+
+function isoWeek(date) {
+  const d   = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const day = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - day);
+  const y1  = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return Math.ceil((((d - y1) / 86400000) + 1) / 7);
+}
+
+const todayD = new Date();
+const todayS = iso(todayD.getFullYear(), todayD.getMonth()+1, todayD.getDate());
+
+// ── YEAR NAV ──
+const yearNav = document.getElementById('yearNav');
+for (let y = 2026; y <= 2027; y++) {
+  const a = document.createElement('a');
+  a.href        = `kalender-norconsult-${y}.html`;
+  a.textContent = y;
+  if (y === YEAR) a.classList.add('current-year');
+  yearNav.appendChild(a);
+}
+
+// ── MONTH NAV ──
+const mNav = document.getElementById('mNav');
+MONTHS.forEach((name, i) => {
+  const a = document.createElement('a');
+  a.href = `#m${i+1}`;
+  a.textContent = name.slice(0,3);
+  mNav.appendChild(a);
+});
+
+// ── DATECALC + CLICK STUBS (defined early so calendar build can reference them) ──
+// Full implementations are further down in the script.
+let dcFrom     = null;
+let dcTo       = null;
+let dcPickMode = null;
+
+function dcIso(d) { return iso(d.getFullYear(), d.getMonth()+1, d.getDate()); }
+
+function dcHandleCalClick(ds) {
+  if (!dcPickMode) return false;
+  const d = new Date(ds + 'T12:00:00');
+  if (dcPickMode === 'from') {
+    dcFrom = d;
+    const btn = document.getElementById('dcBtnFrom');
+    btn.querySelector('.dc-pick-val').textContent = dcFormatDate(d);
+    btn.classList.add('from-set'); btn.classList.remove('active');
+    dcPickMode = 'to';
+    document.getElementById('dcBtnTo').classList.add('active');
+    document.getElementById('dcBtnFrom').classList.remove('active');
+    document.getElementById('dcHint').textContent = '👆 Klikk ein dag i kalenderen over for å setje til-dato';
+  } else {
+    dcTo = d;
+    const btn = document.getElementById('dcBtnTo');
+    btn.querySelector('.dc-pick-val').textContent = dcFormatDate(d);
+    btn.classList.add('to-set'); btn.classList.remove('active');
+    dcPickMode = null;
+    document.getElementById('calGrid').classList.remove('picking-mode');
+    document.getElementById('dcHint').style.display = 'none';
+    document.getElementById('dcBtnTo').classList.remove('active');
+  }
+  dcUpdateRangeHighlight();
+  dcCalcResult();
+  return true;
+}
+
+function attachDayClick(cell, ds) {
+  cell.classList.add('clickable');
+  cell.onclick = (e) => {
+    e.stopPropagation();
+    if (dcHandleCalClick(ds)) return;
+    openPopup(ds, cell);
+  };
+}
+
+function dcUpdateRangeHighlight() {
+  document.querySelectorAll('.day.dc-range-from,.day.dc-range-to,.day.dc-in-range')
+    .forEach(el => el.classList.remove('dc-range-from','dc-range-to','dc-in-range'));
+  if (dcFrom) {
+    const el = document.querySelector(`.day[data-date="${dcIso(dcFrom)}"]`);
+    if (el) el.classList.add('dc-range-from');
+  }
+  if (dcTo) {
+    const el = document.querySelector(`.day[data-date="${dcIso(dcTo)}"]`);
+    if (el) el.classList.add('dc-range-to');
+  }
+  if (dcFrom && dcTo) {
+    const lo = dcFrom < dcTo ? dcFrom : dcTo;
+    const hi = dcFrom < dcTo ? dcTo   : dcFrom;
+    const cur = new Date(lo); cur.setDate(cur.getDate()+1);
+    while (cur < hi) {
+      const el = document.querySelector(`.day[data-date="${dcIso(cur)}"]`);
+      if (el) el.classList.add('dc-in-range');
+      cur.setDate(cur.getDate()+1);
+    }
+  }
+}
+
+// ── BUILD CALENDAR ──
+const calGrid = document.getElementById('calGrid');
+MONTHS.forEach((mName, mi) => {
+  const mn       = mi + 1;
+  const dimMonth = new Date(YEAR, mn, 0).getDate();
+  const firstDow = new Date(YEAR, mi, 1).getDay();
+  const offset   = firstDow === 0 ? 6 : firstDow - 1;
+
+  const cells = [...Array(offset).fill(null), ...Array.from({length:dimMonth},(_,i)=>i+1)];
+  while (cells.length % 7) cells.push(null);
+
+  const card = document.createElement('div');
+  card.className = 'month-card'; card.id = `m${mn}`;
+
+  const mh = document.createElement('div');
+  mh.className = 'm-head';
+  mh.innerHTML = `<span class="m-name">${mName}</span><span class="m-tag">${YEAR} · ${String(mn).padStart(2,'0')}</span>`;
+  card.appendChild(mh);
+
+  const dr = document.createElement('div');
+  dr.className = 'dow-row';
+  DOW_HDR.forEach((lbl,i) => {
+    const dc = document.createElement('div');
+    dc.className = 'dow-cell' + (i===0?' wk-lbl':i===6?' sat-col':i===7?' sun-col':'');
+    dc.textContent = lbl;
+    dr.appendChild(dc);
+  });
+  card.appendChild(dr);
+
+  const wb = document.createElement('div');
+  wb.className = 'weeks';
+
+  for (let w = 0; w < cells.length/7; w++) {
+    const wCells = cells.slice(w*7, w*7+7);
+    const wr = document.createElement('div');
+    wr.className = 'week-row';
+
+    const firstReal = wCells.find(c=>c!==null);
+    const wDate = firstReal ? new Date(YEAR,mi,firstReal) : new Date(YEAR,mi,1);
+    const wkn = document.createElement('div');
+    wkn.className = 'wk-num';
+    wkn.textContent = isoWeek(wDate);
+    wr.appendChild(wkn);
+
+    wCells.forEach((day, col) => {
+      const cell = document.createElement('div');
+      cell.className = 'day';
+      if (day === null) {
+        cell.classList.add('empty');
+      } else {
+        if (col===5||col===6) cell.classList.add('wkend');
+        const ds  = iso(YEAR,mn,day);
+        const hol = HOLIDAYS[ds];
+        const ncf = NC_FREE[ds];
+        const ncg = NC_GRO[ds];
+        if (hol)           cell.classList.add('hol');
+        if (ncf)           cell.classList.add('nc-free');
+        if (ncg)           cell.classList.add('nc-gro');
+        if (ds===todayS)   cell.classList.add('today');
+        cell.dataset.date = ds;
+
+        const dn = document.createElement('span');
+        dn.className = 'dn'; dn.textContent = day;
+        cell.appendChild(dn);
+
+        const label = hol || ncf || ncg;
+        if (label) {
+          const hl = document.createElement('span');
+          hl.className = 'hl'; hl.textContent = label;
+          cell.appendChild(hl);
+          attachDayClick(cell, ds);
+        } else {
+          cell.onclick = (e) => { e.stopPropagation(); dcHandleCalClick(ds); };
+        }
+      }
+      wr.appendChild(cell);
+    });
+    wb.appendChild(wr);
+  }
+  card.appendChild(wb);
+  calGrid.appendChild(card);
+});
+
+// ── HOLIDAY TABLE ── (helligdagar + Norconsult fridagar)
+const htBody = document.getElementById('htBody');
+const allTableDays = {};
+Object.entries(HOLIDAYS).forEach(([ds,n]) => allTableDays[ds] = {name:n, type:'Helligdag', cls:'next'});
+Object.entries(NC_FREE).forEach(([ds,n])  => { if(!allTableDays[ds]) allTableDays[ds]={name:n,type:'NC betalt fri',cls:'nc'}; });
+Object.entries(NC_GRO).forEach(([ds,n])   => { if(!allTableDays[ds]) allTableDays[ds]={name:n,type:'Gro-dagen (ferie)',cls:'gro'}; });
+
+Object.entries(allTableDays).sort(([a],[b])=>a.localeCompare(b)).forEach(([ds,info]) => {
+  const d    = new Date(ds+'T12:00:00');
+  const tr   = document.createElement('tr');
+  if (ds < todayS) tr.classList.add('gone'); else tr.classList.add(info.cls||'next');
+  const dowCap = DOW_NB[d.getDay()].charAt(0).toUpperCase()+DOW_NB[d.getDay()].slice(1);
+  const typeColor = info.type==='NC betalt fri' ? `style="color:var(--norconsult);font-weight:600"` :
+                    info.type.includes('Gro')   ? `style="color:var(--gro-color);font-weight:600"` : '';
+  tr.innerHTML = `<td class="dt">${String(d.getDate()).padStart(2,'0')}. ${MONTHS[d.getMonth()]} ${YEAR}</td>
+    <td class="nm">${info.name}</td><td class="dw">${dowCap}</td>
+    <td class="dw" ${typeColor}>${info.type}</td>`;
+  htBody.appendChild(tr);
+});
+
+// ══════════════════════════════════════════
+//  DAY POPUP
+// ══════════════════════════════════════════
+
+// Map date-string → list of gcal event objects (filled by renderGcalEvents)
+const eventsByDate = {};
+
+const DOW_FULL_NB = ['Søndag','Måndag','Tysdag','Onsdag','Torsdag','Fredag','Laurdag'];
+
+function openPopup(ds, anchorEl) {
+  const d       = new Date(ds + 'T12:00:00');
+  const dayNum  = d.getDate();
+  const monName = MONTHS[d.getMonth()];
+  const dowName = DOW_FULL_NB[d.getDay()];
+  const holName = HOLIDAYS[ds];
+  const events  = eventsByDate[ds] || [];
+
+  // nothing to show?
+  if (!holName && events.length === 0) return;
+
+  document.getElementById('popupDate').textContent = `${dayNum}. ${monName}`;
+  document.getElementById('popupDow').textContent  = dowName;
+
+  const body = document.getElementById('popupBody');
+  body.innerHTML = '';
+
+  // holiday row
+  if (holName) {
+    const row = document.createElement('div');
+    row.className = 'popup-holiday';
+    row.innerHTML = `<span class="popup-holiday-dot"></span>
+                     <span class="popup-holiday-name">${holName}</span>`;
+    body.appendChild(row);
+  }
+
+  // event rows
+  if (events.length === 0 && !holName) {
+    const empty = document.createElement('div');
+    empty.className = 'popup-empty';
+    empty.textContent = 'Ingen hendingar denne dagen.';
+    body.appendChild(empty);
+  }
+
+  events.forEach(ev => {
+    const isAllDay  = !ev.start?.dateTime;
+    const calId     = ev._calId || ev.organizer?.email || 'primary';
+    const color     = calendarMeta[calId]?.color || '#1F547A';
+    const calName   = calendarMeta[calId]?.name  || '';
+    const title     = ev.summary || '(utan tittel)';
+    const desc      = ev.description ? ev.description.replace(/<[^>]*>/g,'').trim() : '';
+
+    let timeStr = 'Heildags';
+    if (!isAllDay) {
+      const start = new Date(ev.start.dateTime);
+      const end   = ev.end?.dateTime ? new Date(ev.end.dateTime) : null;
+      const fmt   = t => t.toLocaleTimeString('nb-NO',{hour:'2-digit',minute:'2-digit'});
+      timeStr = end ? `${fmt(start)} – ${fmt(end)}` : fmt(start);
+    }
+
+    const row = document.createElement('div');
+    row.className = 'popup-event';
+    row.innerHTML = `
+      <span class="popup-ev-dot" style="background:${color}"></span>
+      <div class="popup-ev-info">
+        <div class="popup-ev-title${isAllDay?' allday':''}">${title}</div>
+        <div class="popup-ev-time">${timeStr}</div>
+        ${calName ? `<div class="popup-ev-cal">${calName}</div>` : ''}
+        ${desc    ? `<div class="popup-ev-desc">${desc.slice(0,200)}${desc.length>200?'…':''}</div>` : ''}
+      </div>`;
+    body.appendChild(row);
+  });
+
+  // position popup near the clicked cell
+  const popup    = document.getElementById('popup');
+  const backdrop = document.getElementById('popupBackdrop');
+  const rect     = anchorEl.getBoundingClientRect();
+  const popW     = 320;
+  const margin   = 8;
+
+  let left = rect.left + rect.width / 2 - popW / 2;
+  left = Math.max(margin, Math.min(left, window.innerWidth - popW - margin));
+
+  let top = rect.bottom + margin + window.scrollY;
+  // flip above if too close to bottom
+  if (rect.bottom + 300 > window.innerHeight) {
+    top = rect.top - margin + window.scrollY - 300;
+  }
+
+  popup.style.left = left + 'px';
+  popup.style.top  = top  + 'px';
+
+  backdrop.classList.add('open');
+  // trigger transition on next frame
+  requestAnimationFrame(() => popup.classList.add('open'));
+}
+
+function closePopup() {
+  const popup    = document.getElementById('popup');
+  const backdrop = document.getElementById('popupBackdrop');
+  popup.classList.remove('open');
+  backdrop.classList.remove('open');
+}
+
+// close on Escape
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closePopup(); });
+
+// ══════════════════════════════════════════
+//  GOOGLE CALENDAR
+// ══════════════════════════════════════════
+let gcalToken      = null;
+let allEvents      = [];     // all fetched events
+let calendarMeta   = {};     // id → { name, color, enabled }
+
+// -- helpers --
+function setStatus(msg, type) {
+  const el = document.getElementById('gcalStatus');
+  if (el) { el.textContent = msg; el.className = 'gcal-strip-status' + (type === 'err' ? ' err' : ''); }
+}
+
+function toggleEventsPanel() {
+  const panel = document.getElementById('eventsPanel');
+  const btn   = document.getElementById('gcalEventsToggle');
+  const open  = panel.style.display === 'none' || panel.style.display === '';
+  panel.style.display = open ? 'block' : 'none';
+  btn.classList.toggle('open', open);
+}
+
+// -- sign in --
+function gcalSignIn() {
+  if (!GCAL_CLIENT_ID || GCAL_CLIENT_ID.startsWith('DIN_')) {
+    setStatus('⚠ Legg inn din Client ID', 'err'); return;
+  }
+  const client = google.accounts.oauth2.initTokenClient({
+    client_id: GCAL_CLIENT_ID,
+    scope: GCAL_SCOPE,
+    callback: async (resp) => {
+      if (resp.error) { setStatus('Innlogging feila', 'err'); return; }
+      gcalToken = resp.access_token;
+      document.getElementById('gcalStripLoggedOut').style.display = 'none';
+      document.getElementById('gcalStripLoggedIn').style.display  = 'flex';
+      setStatus('Hentar…', '');
+      await fetchCalendarList();
+      await fetchGcalEvents();
+    },
+  });
+  client.requestAccessToken();
+}
+
+// -- sign out --
+function gcalSignOut() {
+  if (gcalToken) google.accounts.oauth2.revoke(gcalToken, () => {});
+  gcalToken = null; allEvents = []; calendarMeta = {};
+  document.getElementById('gcalStripLoggedOut').style.display = 'flex';
+  document.getElementById('gcalStripLoggedIn').style.display  = 'none';
+  document.getElementById('eventsPanel').style.display        = 'none';
+  const tog = document.getElementById('gcalEventsToggle');
+  if (tog) tog.classList.remove('open');
+  document.getElementById('gcalEvents').innerHTML = '';
+  document.getElementById('calToggles').innerHTML = '';
+  setStatus('', '');
+  document.querySelectorAll('.day.has-event').forEach(el => el.classList.remove('has-event'));
+}
+
+// -- fetch list of calendars to get names & colors --
+async function fetchCalendarList() {
+  try {
+    const res  = await fetch('https://www.googleapis.com/calendar/v3/users/me/calendarList',
+      {headers:{Authorization:'Bearer '+gcalToken}});
+    const data = await res.json();
+    (data.items||[]).forEach(cal => {
+      calendarMeta[cal.id] = {
+        name:    cal.summary || cal.id,
+        color:   cal.backgroundColor || '#1F547A',
+        enabled: true,
+      };
+    });
+  } catch(e) { console.warn('CalendarList error', e); }
+}
+
+// -- fetch events from ALL calendars in parallel --
+async function fetchGcalEvents() {
+  const timeMin = new Date(YEAR,0,1).toISOString();
+  const timeMax = new Date(YEAR,11,31,23,59,59).toISOString();
+
+  const calIds = Object.keys(calendarMeta);
+  if (calIds.length === 0) calIds.push('primary');
+
+  setStatus(`Hentar frå ${calIds.length} kalendarar…`, 'ok');
+
+  try {
+    // fetch all calendars in parallel
+    const results = await Promise.all(calIds.map(async calId => {
+      const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events`
+        + `?timeMin=${encodeURIComponent(timeMin)}`
+        + `&timeMax=${encodeURIComponent(timeMax)}`
+        + `&singleEvents=true&orderBy=startTime&maxResults=2500`;
+      try {
+        const res  = await fetch(url, {headers:{Authorization:'Bearer '+gcalToken}});
+        if (!res.ok) return [];
+        const data = await res.json();
+        // tag each event with which calendar it belongs to
+        return (data.items||[]).map(ev => ({...ev, _calId: calId}));
+      } catch(e) {
+        console.warn('Feil ved henting av kalender:', calId, e);
+        return [];
+      }
+    }));
+
+    // flatten and sort by start time
+    allEvents = results.flat().sort((a,b) => {
+      const ta = a.start?.dateTime || a.start?.date || '';
+      const tb = b.start?.dateTime || b.start?.date || '';
+      return ta.localeCompare(tb);
+    });
+
+    buildCalendarToggles();
+    renderGcalEvents();
+  setStatus(`${allEvents.length} hend. / ${calIds.length} kal.`, '');
+  } catch(e) {
+    setStatus('Feil: ' + e.message, 'err');
+  }
+}
+
+// -- build toggle pills (one per calendar in the legend strip) --
+function buildCalendarToggles() {
+  const box = document.getElementById('calToggles');
+  box.innerHTML = '';
+  const calIds = Object.keys(calendarMeta);
+  calIds.forEach(id => {
+    const meta = calendarMeta[id];
+    if (!meta) return;
+    const btn = document.createElement('button');
+    btn.className = 'cal-toggle active';
+    btn.dataset.calId = id;
+    btn.innerHTML = `<span class="cal-dot" style="background:${meta.color}"></span>${meta.name}`;
+    btn.addEventListener('click', () => {
+      calendarMeta[id].enabled = !calendarMeta[id].enabled;
+      btn.classList.toggle('active', calendarMeta[id].enabled);
+      renderGcalEvents();
+    });
+    box.appendChild(btn);
+  });
+}
+
+// -- render events based on active toggles --
+function renderGcalEvents() {
+  // clear old dots and click handlers from gcal
+  document.querySelectorAll('.day.has-event').forEach(el => {
+    el.classList.remove('has-event');
+  });
+
+  // reset eventsByDate (keep holiday clicks intact)
+  Object.keys(eventsByDate).forEach(k => delete eventsByDate[k]);
+
+  const container = document.getElementById('gcalEvents');
+  container.innerHTML = '';
+
+  const visible = allEvents.filter(ev => {
+    const calId = ev._calId || ev.organizer?.email || 'primary';
+    return calendarMeta[calId]?.enabled !== false;
+  });
+
+  if (visible.length === 0) {
+    container.innerHTML = '<div class="gcal-ev"><span class="gcal-ev-title">Ingen hendingar å vise</span></div>';
+    return;
+  }
+
+  visible.forEach(ev => {
+    const startRaw = ev.start?.dateTime || ev.start?.date;
+    const isAllDay = !ev.start?.dateTime;
+    const startD   = new Date(startRaw + (isAllDay ? 'T12:00:00' : ''));
+    const calId    = ev._calId || ev.organizer?.email || 'primary';
+    const color    = calendarMeta[calId]?.color || '#1F547A';
+
+    // group by date
+    const cellIso = iso(startD.getFullYear(), startD.getMonth()+1, startD.getDate());
+    if (!eventsByDate[cellIso]) eventsByDate[cellIso] = [];
+    eventsByDate[cellIso].push(ev);
+
+    // dot + click on calendar cell
+    const calCell = document.querySelector(`.day[data-date="${cellIso}"]`);
+    if (calCell) {
+      calCell.classList.add('has-event');
+      attachDayClick(calCell, cellIso);
+    }
+
+    const dateStr = startD.toLocaleDateString('nb-NO', {day:'2-digit', month:'short'});
+    const row = document.createElement('div');
+    row.className = 'gcal-ev';
+    row.style.cursor = 'pointer';
+    row.title = 'Sjå i kalender';
+    row.innerHTML = `
+      <span class="gcal-ev-cal" style="background:${color}"></span>
+      <span class="gcal-ev-date">${dateStr}</span>
+      <span class="gcal-ev-title${isAllDay?' allday':''}">${ev.summary||'(utan tittel)'}</span>`;
+
+    // clicking list row also opens popup on the calendar cell
+    row.addEventListener('click', () => {
+      const target = document.querySelector(`.day[data-date="${cellIso}"]`);
+      if (target) {
+        target.scrollIntoView({behavior:'smooth', block:'center'});
+        setTimeout(() => openPopup(cellIso, target), 350);
+      }
+    });
+    container.appendChild(row);
+  });
+}
+
+// ══════════════════════════════════════════
+//  DATE CALCULATOR
+// ══════════════════════════════════════════
+
+const DC_MONTHS   = ['Januar','Februar','Mars','April','Mai','Juni','Juli','August','September','Oktober','November','Desember'];
+const DC_DOW      = ['Ma','Ti','On','To','Fr','Lø','Sø'];
+const DC_DOW_FULL = ['Søndag','Måndag','Tysdag','Onsdag','Torsdag','Fredag','Laurdag'];
+
+// ══════════════════════════════════════════
+//  DATE CALCULATOR – uses main calendar as picker
+// ══════════════════════════════════════════
+
+function buildAllHolidays(y1, y2) {
+  const all = {};
+  for (let y = y1; y <= y2; y++) Object.assign(all, buildHolidays(y));
+  return all;
+}
+
+function dcFormatDate(d) {
+  return `${d.getDate()}. ${DC_MONTHS[d.getMonth()].slice(0,3)} ${d.getFullYear()}`;
+}
+// alias used elsewhere
+function formatDcDate(d) { return dcFormatDate(d); }
+
+// Activate a picker mode – next click on any calendar day sets that date
+function dcActivate(which) {
+  if (dcPickMode === which) {
+    // toggle off if already active
+    dcPickMode = null;
+    document.getElementById('calGrid').classList.remove('picking-mode');
+    document.getElementById('dcHint').style.display = 'none';
+    document.getElementById('dcBtnFrom').classList.toggle('active', false);
+    document.getElementById('dcBtnTo').classList.toggle('active', false);
+    return;
+  }
+  dcPickMode = which;
+  document.getElementById('calGrid').classList.add('picking-mode');
+  const hint = document.getElementById('dcHint');
+  hint.style.display = 'block';
+  hint.textContent = which === 'from'
+    ? '👆 Klikk ein dag i kalenderen over for å setje frå-dato'
+    : '👆 Klikk ein dag i kalenderen over for å setje til-dato';
+  document.getElementById('dcBtnFrom').classList.toggle('active', which === 'from');
+  document.getElementById('dcBtnTo').classList.toggle('active', which === 'to');
+}
+
+function dcCalcResult() {
+  const res = document.getElementById('calcResult');
+  if (!dcFrom || !dcTo) {
+    res.innerHTML = '<span class="dc-result-placeholder">Vel frå- og til-dato i kalenderen over</span>';
+    return;
+  }
+
+  const lo = dcFrom <= dcTo ? dcFrom : dcTo;
+  const hi = dcFrom <= dcTo ? dcTo   : dcFrom;
+  const calDays = Math.round((hi - lo) / 86400000);
+  const weeks   = Math.floor(calDays / 7);
+  const remDays = calDays % 7;
+  const months  = (hi.getFullYear()-lo.getFullYear())*12 + (hi.getMonth()-lo.getMonth());
+
+  const allHols  = buildAllHolidays(lo.getFullYear(), hi.getFullYear());
+  const allNcOff = {...allHols};
+  if (typeof NC_FREE !== 'undefined') Object.keys(NC_FREE).forEach(d => allNcOff[d] = NC_FREE[d]);
+  if (typeof NC_GRO  !== 'undefined') Object.keys(NC_GRO).forEach(d  => allNcOff[d] = NC_GRO[d]);
+
+  const sommStart = typeof NC_SOMM_START !== 'undefined' ? new Date(NC_SOMM_START+'T00:00:00') : null;
+  const sommEnd   = typeof NC_SOMM_END   !== 'undefined' ? new Date(NC_SOMM_END  +'T23:59:59') : null;
+  const tNorm = typeof NC_T_NORM !== 'undefined' ? NC_T_NORM : 7.5;
+  const tSomm = typeof NC_T_SOMM !== 'undefined' ? NC_T_SOMM : 7;
+
+  let workdays = 0, holCount = 0, workHours = 0;
+  const cur = new Date(lo); cur.setHours(12,0,0,0);
+  const hiN = new Date(hi); hiN.setHours(12,0,0,0);
+  while (cur <= hiN) {
+    const dow = cur.getDay();
+    if (dow !== 0 && dow !== 6) {
+      if (allNcOff[dcIso(cur)]) {
+        holCount++;
+      } else {
+        workdays++;
+        workHours += (sommStart && sommEnd && cur >= sommStart && cur <= sommEnd) ? tSomm : tNorm;
+      }
+    }
+    cur.setDate(cur.getDate()+1);
+  }
+
+  const wkStr = weeks > 0
+    ? `${weeks} veke${weeks>1?'r':''} og ${remDays} dag${remDays!==1?'ar':''}`
+    : `${remDays} dag${remDays!==1?'ar':''}`;
+
+  const hoursBlock = sommStart ? `
+      <div class="dc-result-item">
+        <div class="dc-result-num" style="color:var(--norconsult);font-size:1.6rem">${workHours}</div>
+        <div class="dc-result-lbl">normaltimar (NC)</div>
+        <div class="dc-result-detail">${tSomm}t/dag sommar · ${tNorm}t/dag elles</div>
+      </div>` : '';
+
+  res.innerHTML = `
+    <div class="dc-result-row">
+      <div class="dc-result-item">
+        <div class="dc-result-num">${calDays}</div>
+        <div class="dc-result-lbl">kalenderdagar</div>
+        <div class="dc-result-detail">${wkStr}${months>0?` · ${months} mnd`:''}</div>
+      </div>
+      <div class="dc-result-item">
+        <div class="dc-result-num workdays">${workdays}</div>
+        <div class="dc-result-lbl">arbeidsdagar (NC)</div>
+        <div class="dc-result-detail">${holCount} fri/helligdag${holCount!==1?'ar':''} ekskl.</div>
+      </div>
+      ${hoursBlock}
+    </div>
+    <div class="dc-result-range">${dcFormatDate(lo)} → ${dcFormatDate(hi)}</div>`;
+}
+
+function swapDates() {
+  [dcFrom, dcTo] = [dcTo, dcFrom];
+  const fb = document.getElementById('dcBtnFrom');
+  const tb = document.getElementById('dcBtnTo');
+  fb.querySelector('.dc-pick-val').textContent = dcFrom ? formatDcDate(dcFrom) : 'Klikk ein dag i kalenderen';
+  tb.querySelector('.dc-pick-val').textContent = dcTo   ? formatDcDate(dcTo)   : 'Klikk ein dag i kalenderen';
+  fb.classList.toggle('from-set', !!dcFrom);
+  tb.classList.toggle('to-set',   !!dcTo);
+  dcUpdateRangeHighlight();
+  dcCalcResult();
+}
+
+function clearDates() {
+  dcFrom = null; dcTo = null; dcPickMode = null;
+  document.getElementById('calGrid').classList.remove('picking-mode');
+  document.getElementById('dcHint').style.display = 'none';
+  document.getElementById('dcBtnFrom').className = 'dc-pick-btn';
+  document.getElementById('dcBtnTo').className   = 'dc-pick-btn';
+  document.getElementById('dcBtnFrom').querySelector('.dc-pick-val').textContent = 'Klikk ein dag i kalenderen';
+  document.getElementById('dcBtnTo').querySelector('.dc-pick-val').textContent   = 'Klikk ein dag i kalenderen';
+  document.getElementById('calcResult').innerHTML = '<span class="dc-result-placeholder">Vel frå- og til-dato i kalenderen over</span>';
+  dcUpdateRangeHighlight();
+}
+</script>
+</body>
+</html>
